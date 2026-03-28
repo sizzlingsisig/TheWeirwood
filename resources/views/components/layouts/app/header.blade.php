@@ -43,7 +43,7 @@
                     </form>
 
                     <button type="button" onclick="persistTheme('light')"
-                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (auth()->user()->theme_preference ?? 'system') === 'light' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
+                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (Auth::check() ? auth()->user()->theme_preference : 'system') === 'light' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -52,7 +52,7 @@
                         Light
                     </button>
                     <button type="button" onclick="persistTheme('dark')"
-                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (auth()->user()->theme_preference ?? 'system') === 'dark' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
+                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (Auth::check() ? auth()->user()->theme_preference : 'system') === 'dark' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -61,7 +61,7 @@
                         Dark
                     </button>
                     <button type="button" onclick="persistTheme('system')"
-                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (auth()->user()->theme_preference ?? 'system') === 'system' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
+                        class="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center {{ (Auth::check() ? auth()->user()->theme_preference : 'system') === 'system' ? 'bg-gray-100 text-blue-700 dark:bg-gray-700 dark:text-blue-400 font-medium' : 'text-gray-700 dark:text-gray-300' }}">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -94,10 +94,14 @@
                     <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                         <span
                             class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
-                            {{ Auth::user()->initials() }}
+                            @auth
+                                {{ Auth::user()->initials() }}
+                            @else
+                                G
+                            @endauth
                         </span>
                     </span>
-                    <span class="ml-2 hidden md:block">{{ Auth::user()->name }}</span>
+                    <span class="ml-2 hidden md:block">@auth{{ Auth::user()->name }}@endauth</span>
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-1" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />

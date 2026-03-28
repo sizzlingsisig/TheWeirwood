@@ -9,11 +9,14 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('houses', function (Blueprint $table) {
             $table->id();
             $table->string('name', 80)->unique();
-            $table->string('sigil_image_path')->nullable(); 
+            $table->string('motto', 80)->nullable();
+            $table->text('description')->nullable();
+            $table->string('sigil_image_path')->nullable();
             $table->smallInteger('starting_honor');
             $table->smallInteger('starting_power');
             $table->smallInteger('starting_debt');
@@ -21,8 +24,6 @@ return new class extends Migration
             $table->softDeletes();
         });
     }
-
-
 
     /**
      * Reverse the migrations.
