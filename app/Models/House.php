@@ -21,7 +21,8 @@ class House extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(User::class, 'house_user')
+            ->withPivot('unlocked_at');
     }
 
     public function regions()
