@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HouseController;
+use App\Http\Controllers\NodeController;
 use App\Http\Controllers\Settings;
 use Illuminate\Support\Facades\Route;
 
@@ -11,6 +12,9 @@ Route::get('/', function () {
 Route::middleware('auth')->group(function () {});
 
 Route::resource('houses', HouseController::class);
+
+Route::resource('nodes', NodeController::class);
+Route::resource('choices', ChoiceController::class);
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', function () {
