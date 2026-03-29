@@ -74,7 +74,7 @@ class GameController extends Controller
         ]);
 
         if ($request->entry_mode === 'blind') {
-            $house = House::inRandomOrder()->first();
+            $house = House::inRandomOrder()->firstOrFail();
         } else {
             $house = House::findOrFail($request->house_id);
         }

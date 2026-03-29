@@ -92,6 +92,7 @@ class HouseController extends Controller
         }
 
         $house->update($validated);
+
         return redirect()->route('houses.show', $house);
     }
 
@@ -102,5 +103,39 @@ class HouseController extends Controller
         $house->delete();
 
         return redirect()->route('houses.index');
+    }
+
+    public function trashed(Request $request)
+    {
+        Gate::authorize('edit-houses');
+
+        $houses = House::onlyTrashed()->paginate(9);
+
+        return view('houses.trashed', compact('houses'));
+    }
+
+    public function restore(Request $request, int $id)
+    {
+        Gate::authorize('edit-houses');
+
+        $house = House::onlyTrashed()->findOrFail($id);
+        $house->restore();
+
+        return redirect()->route('houses.trashed');
+    }
+
+    public function forceDelete(Request $request, int $id)
+    {
+        Gate::authorize('edit-houses');
+
+        $house = House::onlyTrashed()->findOrFail($id);
+
+        if ($house->sigil_image_path) {
+            Storage::disk('public')->delete($house->sigil_image_path);
+        }
+
+        $house->forceDelete();
+
+        return redirect()->route('houses.trashed');
     }
 }
