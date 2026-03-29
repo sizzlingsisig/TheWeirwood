@@ -16,7 +16,7 @@ class GameFactory extends Factory
             'player_id' => Player::factory(),
             'house_id' => House::factory(),
             'region_id' => Region::factory(),
-            'entry_mode' => fake()->randomElement(['commoner', 'quiz', 'map', 'blind']),
+            'entry_mode' => fake()->randomElement(['map', 'blind']),
             'honor' => fake()->numberBetween(30, 75),
             'power' => fake()->numberBetween(30, 75),
             'debt' => fake()->numberBetween(10, 30),
