@@ -37,7 +37,7 @@ class PlayerController extends Controller
             'display_name' => $request->display_name,
         ]);
 
-        return redirect()->route('games.index');
+        return redirect()->route('games.create');
     }
 
     /**

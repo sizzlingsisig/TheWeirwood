@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name') }}</title>
+    <title>{{ 'The ' . config('app.name') }}</title>
     <meta name="description" content="A branching narrative where every choice has a price and every debt compounds. Enter the tree.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,8 +37,8 @@
             }
         }
         window.setAppearance(
-            "{{ auth()->user()->theme_preference ?? '' }}" || 
-            window.localStorage.getItem('appearance') || 
+            "{{ auth()->user()->theme_preference ?? '' }}" ||
+            window.localStorage.getItem('appearance') ||
             'system'
         )
     </script>
@@ -244,7 +244,7 @@
         </div>
 
         <!-- Full Screen Navigation Modal -->
-        <div x-show="sidebarOpen" 
+        <div x-show="sidebarOpen"
             x-transition:enter="transition ease-out duration-300"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"
@@ -266,7 +266,7 @@
             x-transition:leave-end="opacity-0 scale-95"
             class="fixed inset-0 z-50 flex items-center justify-center"
             @click.stop>
-            
+
             <!-- Close Button -->
             <button @click="sidebarOpen = false" class="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg text-white">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -278,35 +278,35 @@
             <nav class="w-full max-w-md px-4">
                 <ul class="space-y-6 text-center">
                     <li>
-                        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false" 
+                        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false"
                             class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('dashboard') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Dashboard
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('games.create') }}" @click="sidebarOpen = false" 
+                        <a href="{{ route('games.create') }}" @click="sidebarOpen = false"
                             class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('games.create') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Begin Journey
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('runs.index') }}" @click="sidebarOpen = false" 
+                        <a href="{{ route('runs.index') }}" @click="sidebarOpen = false"
                             class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('runs.*') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Chronicle
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('houses.index') }}" @click="sidebarOpen = false" 
+                        <a href="{{ route('houses.index') }}" @click="sidebarOpen = false"
                             class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('houses.*') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Hall of Houses
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('endings.index') }}" @click="sidebarOpen = false" 
+                        <a href="{{ route('endings.index') }}" @click="sidebarOpen = false"
                             class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('endings.index') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Endings
                         </a>

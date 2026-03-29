@@ -21,6 +21,9 @@ Route::middleware(['auth'])->group(function () {
 
     // The Archivist: Static Content CRUD
     Route::resource('houses', HouseController::class);
+    Route::get('/houses/trashed', [HouseController::class, 'trashed'])->name('houses.trashed');
+    Route::post('/houses/{id}/restore', [HouseController::class, 'restore'])->name('houses.restore');
+    Route::delete('/houses/{id}/force-delete', [HouseController::class, 'forceDelete'])->name('houses.forceDelete');
     Route::resource('nodes', NodeController::class);
     Route::resource('choices', ChoiceController::class);
     Route::resource('endings', EndingController::class); // Upgraded to full resource
@@ -31,6 +34,7 @@ Route::middleware(['auth'])->group(function () {
 
     // The Engine: Gameplay Loop
     Route::prefix('games')->name('games.')->group(function () {
+        Route::get('/', [GameController::class, 'index'])->name('index');
         Route::get('/create', [GameController::class, 'create'])->name('create');
         Route::post('/start', [GameController::class, 'start'])->name('start');
         Route::get('/{game}/play', [GameController::class, 'play'])->name('play');

@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\DB;
 
 class GameEngineService
 {
+    /**
+     * @return array{status: string, game: Game}
+     */
     public function processChoice(Game $game, Choice $choice): array
     {
         $honorBefore = $game->honor;
@@ -65,6 +68,7 @@ class GameEngineService
             return ['status' => 'ruin', 'game' => $game];
         }
 
+        /** @var Node|null $nextNode */
         $nextNode = $choice->toNode;
 
         if ($nextNode && $nextNode->is_ending) {
@@ -95,28 +99,28 @@ class GameEngineService
             }
         }
 
-        Run::create([
-            'game_id' => $game->id,
-            'player_id' => $game->player_id,
-            'house_id' => $game->house_id,
-            'region_id' => $game->region_id,
-            'starting_node_id' => $game->gameSteps()->first()?->choice?->fromNode?->id ?? $game->current_node_id,
-            'ending_node_id' => $game->current_node_id,
-            'final_honor' => $game->honor,
-            'final_power' => $game->power,
-            'final_debt' => $game->debt,
-            'steps_taken' => $game->gameSteps()->count(),
-            'is_victory' => $game->honor > 0 && $game->debt < 100,
-            'unlocked_house_id' => $unlockedHouse?->id,
-            'completed_at' => now(),
-        ]);
+        Run::updateOrCreate(
+            ['game_id' => $game->id],
+            [
+                'player_id' => $game->player_id,
+                'house_id' => $game->house_id,
+                'region_id' => $game->region_id,
+                'starting_node_id' => $game->gameSteps()->first()?->choice->fromNode->id ?? $game->current_node_id,
+                'ending_node_id' => $game->current_node_id,
+                'final_honor' => $game->honor,
+                'final_power' => $game->power,
+                'final_debt' => $game->debt,
+                'steps_taken' => $game->gameSteps()->count(),
+                'is_victory' => $game->honor > 0 && $game->debt < 100,
+                'unlocked_house_id' => $unlockedHouse?->id,
+                'completed_at' => now(),
+            ]
+        );
     }
 
     public function getStartingNodeId(string $entryMode, House $house): int
     {
         $nodeCode = match ($entryMode) {
-            'commoner' => 'TRUNK_01',
-            'quiz' => 'QUIZ_01',
             'map' => 'MAP_01',
             'blind' => 'BLIND_01',
             default => 'TRUNK_01',

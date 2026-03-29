@@ -1,69 +1,171 @@
-# Laravel + Blade Starter Kit
+# The Weirwood Decision Simulator
+
+![Weirwood Banner](docs/screenshots/banner.png)
+
+## Application Description and Purpose
+
+**The Weirwood** is a web-based, interactive political drama engine with roguelite progression. Set in a dark, atmospheric fantasy world, players take on the role of the bastard child of a Great House, summoned to the capital to navigate deadly politics. 
+
+The purpose of the application is to simulate a complex, branching narrative where choices have permanent consequences. Every decision directly impacts three core resources: **Honor, Power, and Debt**. As players borrow to survive, they face the ruthless "Iron Bank" mechanic—compounding debt multipliers that can lead to total ruin. Success unlocks new houses, factions, and endings for future playthroughs.
 
 ---
 
-## Introduction
+## Prerequisites
+To run this application locally, you will need the following software installed:
 
-Our Laravel 12 + Blade starter kit provides the typical functionality found in the Laravel Starter kits, but with a few key differences:
+- **PHP 8.0+**: The backend is built with Laravel, which requires PHP 8.0 or higher.
+- **Composer**: For managing PHP dependencies.
+- **Node.js and npm**: For managing frontend dependencies and compiling assets.
+- **PostgreSQL**: The application uses PostgreSQL as its database.
 
-- A CoreUI/AdminLTE inspired design layout
-- Blade + AlpineJS code
+## Installation and Setup Instructions
 
-This kit aims to fill the gap where there is no simple **Blade only** starter kit available.
+Follow these steps to set up the project locally:
 
-Our internal goal at Laravel Daily is to start using this starter kit for our Demo applications, to avoid overwhelming our audience with Vue/Livewire/React if we had used one of the official Laravel 12 starter kits.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/yourusername/TheWeirwood.git
+   cd TheWeirwood
+   ```
 
-**Note:** This is Work in Progress kit, so it will get updates and fixes/features as we go.
+2. **Install PHP dependencies:**
+   ```bash
+   composer install
+   ```
+
+3. **Install and compile frontend assets:**
+   ```bash
+   npm install
+   npm run build
+   # Or use npm run dev for hot-reloading during development
+   ```
+
+4. **Copy the environment file:**
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Generate the application key:**
+   ```bash
+   php artisan key:generate
+   ```
+
+---
+
+Database setup guide (how to create PostgreSQL database)
+6. **Configure the database:**
+   Open the `.env` file and update the following lines with your PostgreSQL database credentials:
+   ```env
+   DB_CONNECTION=pgsql
+   DB_HOST=localhost
+   DB_PORT=5432
+   DB_DATABASE=weirwood
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+    ```
+
+## Migration Commands
+
+Once your database is connected, you need to create the tables and seed the initial game data (Houses, Factions, Nodes, and Choices).
+
+
+Run the following Artisan command:
+```bash
+php artisan migrate --seed
+```
+
+*Note: The `--seed` flag is critical as it populates the database with the initial story branches and Great Houses required to play the game.*
+
+Finally, start the local development server:
+```bash
+composer run dev
+```
+Visit `http://localhost:8000` to begin your journey.
 
 ---
 
 ## Screenshots
 
-![](https://laraveldaily.com/uploads/2025/05/LoginPage.png)
+| Dashboard | Begin Journey |
+|:---:|:---:|
+| ![Dashboard](docs/screenshots/dashboard.png) | ![Begin Journey](docs/screenshots/beginjourney.png) |
+| *The Player Dashboard* | *Selecting a House and Starting a Run* |
 
-![](https://laraveldaily.com/uploads/2025/05/RegisterPage.png)
-
-![](https://laraveldaily.com/uploads/2025/05/DashboardPage.png)
-
-![](https://laraveldaily.com/uploads/2025/05/ProfilePage.png)
-
----
-
-## What is Inside?
-
-Inside you will find all the functions that you would expect:
-
-- Authentication
-    - Login
-    - Registration
-    - Password Reset Flow
-    - Email Confirmation Flow
-- Dashboard Page
-- Profile Settings
-    - Profile Information Page
-    - Password Update Page
-    - Appearance Preferences
+| Hall of Houses | Endings Catalogue |
+|:---:|:---:|
+| ![Houses](docs/screenshots/houses.png) | ![Endings Catalogue](docs/screenshots/endingscatalogue.png) |
+| *Reviewing unlocked Great Houses* | *Tracking discovered endings and achievements* |
 
 ---
 
-## How to use it?
+## List of Features Implemented
 
-To use this kit, you can install it using:
+* **Branching Narrative Engine**: A robust backend that dynamically loads story nodes and available choices based on previous decisions.
+* **Resource Management**: Real-time tracking of Honor, Power, and Debt. Honor caps at 100, Debt leads to a Game Over if it reaches 100.
+* **The Iron Bank Cascade (Debt Multiplier)**: A punishing mechanic where choices that cost Debt multiply based on the player's current debt threshold (e.g., Critical Debt applies a 1.6x multiplier to costs).
+* **House & Faction Gating**: Certain dialogue options and choices are strictly hidden unless the player belongs to the required Great House.
+* **Roguelite Progression**: Unlocking one of the 13 distinct endings awards the player access to new Houses for future runs.
+* **Thematic UI / UX**: A heavily customized, atmospheric Tailwind CSS layout utilizing custom design tokens (`--blood`, `--ember`, `--gold`, `--coal`) and Alpine.js for immersive transitions and glowing effects.
+* **Archivist CMS Ledger**: A detailed background audit log (`debt_events` and `run_states`) recording every choice's mathematical impact for balancing and review.
 
-```bash
-laravel new --using=laraveldaily/starter-kit
+---
+
+## MVC Architecture Explanation
+
+The application strictly adheres to the **Model-View-Controller (MVC)** architectural pattern, separating the game's logic, database entities, and user interface. 
+
+Here is the project structure and how the architecture is organized:
+
+```text
+TheWeirwood/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/    <-- CONTROLLERS: Handle HTTP requests and orchestrate game logic.
+│   │   │   ├── GameController.php   # Processes player choices, calculates multipliers, and advances nodes.
+│   │   │   ├── RunController.php    # Manages starting, pausing, or failing a playthrough (run).
+│   │   │   └── Auth/                # Handles user authentication and registration.
+│   │   └── Middleware/     <-- MIDDLEWARE: Filters requests (e.g., ensuring a player is logged in).
+│   │
+│   ├── Models/             <-- MODELS: Eloquent ORM classes interacting with PostgreSQL.
+│   │   ├── User.php        # Represents the player's account.
+│   │   ├── House.php       # The Great Houses (Stark, Lannister, etc.) and their starting stats.
+│   │   ├── Game.php        # The active game state linking a User, a Run, and current resources.
+│   │   ├── Node.php        # A specific story beat or chapter.
+│   │   ├── Choice.php      # The options available at a Node, carrying stat modifiers.
+│   │   └── DebtEvent.php   # The audit log recording exactly how much debt was incurred.
+│   │
+│   └── Services/
+│       └── GameEngineService.php  # Extracts heavy math (like Debt Cascades) away from Controllers.
+│
+├── database/               <-- DATABASE: Migrations and seeders for PostgreSQL.
+│   ├── migrations/         # SQL schema definitions (users, houses, nodes, choices).
+│   └── seeders/            # Populates the database with initial lore and story paths.
+│
+├── resources/
+│   ├── views/              <-- VIEWS: Blade templates generating the HTML sent to the browser.
+│   │   ├── auth/           # Login and Registration screens styled atmospherically.
+│   │   ├── components/     # Reusable UI elements (layouts, cards, custom inputs).
+│   │   ├── game/           # The main game loop UI displaying nodes and choices.
+│   │   └── welcome.blade.php # The landing page hook.
+│   │
+│   └── css/app.css         # Tailwind CSS variables and imports (--blood, --coal).
+│
+└── routes/
+    └── web.php             <-- ROUTING: Maps URLs (e.g., /game/choose) to Controller methods.
 ```
 
-From there, you can modify the kit to your needs.
+### Architecture Details (With Comments)
 
----
+1. **Models (Data Layer)**
+   Models define relationships and encapsulate data constraints. For example, the `Game` model has an active `Run`, and belongs to a `House`. We use Eloquent relationships (like `$node->choices()`) to easily fetch what options a player has at their current stage.
+   
+2. **Views (Presentation Layer)**
+   The views are built using **Laravel Blade** and **Tailwind CSS**. Instead of tightly coupling logic to the UI, the views simply receive variables from the Controller (e.g., `$honor`, `$power`, `$nodeText`) and render them. We use Blade Components (like `<x-layouts.game>`) to ensure the dark fantasy theme is consistently applied across all pages.
 
-## Design Elements
-
-If you want to see examples of what design elements we have, you can [visit the Wiki](<https://github.com/LaravelDaily/starter-kit/wiki/Design-Examples-(Raw-Files)>) and see the raw HTML files.
-
----
-
-## Licence
-
-Starter kit is open-sourced software licensed under the MIT license.
+3. **Controllers & Services (Logic Layer)**
+   Controllers, like `GameController`, catch the user's form submission when they click a choice. 
+   - *Example flow*: The user selects "Borrow from the bank."
+   - The Controller queries the `Choice` Model.
+   - It delegates the math to `GameEngineService`, which checks the Iron Bank rules (applying a 1.3x or 2.0x multiplier depending on current debt).
+   - The Controller updates the `Game` Model in the database.
+   - Finally, the Controller redirects the user back to the View with the next `Node` loaded.
