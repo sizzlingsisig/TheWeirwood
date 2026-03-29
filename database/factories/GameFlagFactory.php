@@ -1,0 +1,27 @@
+<?php
+
+namespace Database\Factories;
+
+use App\Models\Game;
+use App\Models\GameFlag;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+/**
+ * @extends Factory<GameFlag>
+ */
+class GameFlagFactory extends Factory
+{
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'game_id' => Game::factory(),
+            'flag_key' => fake()->word(),
+            'value' => true,
+        ];
+    }
+}
