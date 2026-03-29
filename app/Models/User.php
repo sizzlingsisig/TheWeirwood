@@ -79,4 +79,14 @@ class User extends Authenticatable
     {
         return $this->houses()->where('houses.id', $house->id)->exists();
     }
+
+    public function players()
+    {
+        return $this->hasMany(Player::class);
+    }
+
+    public function getCurrentPlayerAttribute(): ?Player
+    {
+        return $this->players()->first();
+    }
 }

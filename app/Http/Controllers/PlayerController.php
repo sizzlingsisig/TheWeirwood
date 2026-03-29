@@ -20,7 +20,7 @@ class PlayerController extends Controller
      */
     public function create()
     {
-        //
+        return view('players.create');
     }
 
     /**
@@ -28,7 +28,16 @@ class PlayerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'display_name' => 'required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $player = $user->players()->create([
+            'display_name' => $request->display_name,
+        ]);
+
+        return redirect()->route('games.index');
     }
 
     /**

@@ -3,63 +3,22 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ending;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class EndingController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
-    }
+        $user = Auth::user();
+        $player = $user->players()->first();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
+        $allEndings = Ending::with('node')->get();
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $discoveredEndingIds = \DB::table('runs')
+            ->where('player_id', $player?->id)
+            ->pluck('ending_node_id')
+            ->toArray();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Ending $ending)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Ending $ending)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Ending $ending)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Ending $ending)
-    {
-        //
+        return view('endings.index', compact('allEndings', 'discoveredEndingIds'));
     }
 }

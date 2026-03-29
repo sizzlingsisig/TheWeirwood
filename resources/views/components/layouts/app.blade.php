@@ -42,32 +42,22 @@
 </head>
 
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 antialiased" x-data="{
-    sidebarOpen: localStorage.getItem('sidebarOpen') === null ? window.innerWidth >= 1024 : (localStorage.getItem('sidebarOpen') === 'true' && window.innerWidth >= 1024),
+    sidebarOpen: false,
     toggleSidebar() {
         this.sidebarOpen = !this.sidebarOpen;
-        localStorage.setItem('sidebarOpen', this.sidebarOpen);
     },
-    temporarilyOpenSidebar() {
-        if (!this.sidebarOpen) {
-            this.sidebarOpen = true;
-            localStorage.setItem('sidebarOpen', true);
-        }
-    },
-    formSubmitted: false,
-}">
+}" @toggle-nav.window="toggleSidebar()">
 
     <!-- Main Container -->
-    <div class="min-h-screen flex flex-col">
+    <div class="min-h-screen flex flex-col relative">
 
-        <x-layouts.app.header />
+        <x-layouts.app.header @click="toggleSidebar()" class="cursor-pointer" />
 
         <!-- Main Content Area -->
         <div class="flex flex-1 overflow-hidden">
 
-            <x-layouts.app.sidebar />
-
             <!-- Main Content -->
-            <main class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 content-transition">
+            <main class="flex-1 overflow-auto bg-gray-100 dark:bg-gray-900 transition-all duration-300" :class="{ 'opacity-30': sidebarOpen }">
                 <div class="p-6">
                     <!-- Success Message -->
                     @session('status')
@@ -113,6 +103,98 @@
 
                 </div>
             </main>
+        </div>
+
+        <!-- Full Screen Navigation Modal -->
+        <div x-show="sidebarOpen" 
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            @click="sidebarOpen = false"
+            class="fixed inset-0 z-50 bg-black/80"
+            style="display: none;">
+        </div>
+
+        <!-- Full Screen Navigation Panel -->
+        <div x-show="sidebarOpen"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+            @click.stop>
+            
+            <!-- Close Button -->
+            <button @click="sidebarOpen = false" class="absolute top-4 right-4 p-2 hover:bg-white/10 rounded-lg text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+
+            <!-- Navigation Links - Centered Column -->
+            <nav class="w-full max-w-md px-4">
+                <ul class="space-y-4 text-center">
+                    <li>
+                        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('dashboard') ? 'text-red-400' : '' }}">
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('games.create') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('games.create') ? 'text-red-400' : '' }}">
+                            Play
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('runs.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('runs.*') ? 'text-red-400' : '' }}">
+                            Run History
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('houses.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('houses.*') ? 'text-red-400' : '' }}">
+                            Houses
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="{{ route('endings.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('endings.index') ? 'text-red-400' : '' }}">
+                            Endings
+                        </a>
+                    </li>
+
+                    @if(Auth::user()?->is_admin)
+                    <li class="pt-8 pb-2">
+                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Admin</span>
+                    </li>
+                    <li>
+                        <a href="{{ route('nodes.index') }}" @click="sidebarOpen = false" class="block py-4 text-xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('nodes.*') ? 'text-red-400' : '' }}">
+                            Nodes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ route('choices.index') }}" @click="sidebarOpen = false" class="block py-4 text-xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('choices.*') ? 'text-red-400' : '' }}">
+                            Choices
+                        </a>
+                    </li>
+                    @endif
+
+                    <li class="pt-8">
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="text-lg text-gray-400 hover:text-white transition">
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </body>

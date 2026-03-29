@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
-use Carbon\Carbon;
 
 class NodesSeeder extends Seeder
 {
@@ -14,7 +14,7 @@ class NodesSeeder extends Seeder
         $n = NodeIds::$map;
 
         // [id, node_code, chapter_label, title, narrative_text, debt_warning_text, debt_warning_threshold, is_ending]
-       $nodes = [
+        $nodes = [
 
             // ──────────────────────────────────────────────────
             // CHAPTER I — PROLOGUE  (Trunk 01–05)
@@ -24,7 +24,7 @@ class NodesSeeder extends Seeder
                 'TRUNK_01',
                 'Chapter I: Prologue',
                 'The Raven Arrives',
-                'A black-waxed scroll drops onto the rushes of your modest hall. The seal is broken — a crown pressed into wax the colour of dried blood. The message is brief: "The Hand is dead. The King requires counsel. Come to King\'s Landing." Silence falls over your table. This is not an invitation. It is a leash.',
+                'A black-waxed scroll drops onto the粗糙 table of your modest cottage. The seal bears a sigil you recognize — a direwolf, a lion, a three-eyed crow — but the letter bears no signature. Only words: "Your blood calls. Come home." You have not seen your noble parent in fifteen years. They sent you away as a child, a embarrassment to be hidden. Now they summon you back. The King\'s Road awaits.',
                 null, 40, false, null,
             ],
             [
@@ -32,7 +32,7 @@ class NodesSeeder extends Seeder
                 'TRUNK_02',
                 'Chapter I: Prologue',
                 'The Road South',
-                'Your column leaves at dawn, banners furled against the mist. Old Maester Edwyn rides beside you, his chains clinking a worried rhythm. "They say three Hands have died in as many years," he murmurs. "One from fever, one from grief, and one they simply... stopped talking about." The King\'s Road stretches south like a wound in the earth.',
+                'Your horse leaves at dawn, carrying you toward a city you have only heard in whispers. The road winds through lands that once belonged to your father\'s — or mother\'s — house. Peasants bow to your crest without knowing what it means. Old Maester Edwyn rides beside you, his chains clinking. "They say three Hands have died in as many years," he murmurs. "Your... patron... believes you may be the key to ending the cycle."',
                 null, 40, false, null,
             ],
             [
@@ -40,7 +40,7 @@ class NodesSeeder extends Seeder
                 'TRUNK_03',
                 'Chapter I: Prologue',
                 'The Inn at the Crossroads',
-                'Three cloaked riders share your inn\'s common room, arriving separately yet pretending not to know each other. The innkeeper sweats despite the cold. One rider slides a velvet pouch across a table — coins inside ring silver, far too many for any honest errand. They are watching you.',
+                'Three cloaked riders share your inn\'s common room, arriving separately yet pretending not to know each other. The innkeeper sweats despite the cold. One rider slides a velvet pouch across a table — coins inside ring silver, far too many for any honest errand. They are watching you. One of them wears a pin shaped like your house\'s sigil. They are not here by accident.',
                 null, 40, false, null,
             ],
             [
@@ -48,7 +48,7 @@ class NodesSeeder extends Seeder
                 'TRUNK_04',
                 'Chapter I: Prologue',
                 'The Gates of King\'s Landing',
-                'The city assaults every sense at once: a thousand cook-fires, the cry of gulls over the Blackwater, the damp rot of the harbor district. A Gold Cloak captain bars your way. "Business?" he asks, though his eyes say he already knows the answer — and that the answer will cost you.',
+                'The city assaults every sense at once: a thousand cook-fires, the cry of gulls over the Blackwater, the damp rot of the harbor district. A Gold Cloak captain bars your way. He glances at your cloak\'s hidden crest. "So the bastard returns," he mutters. "Your lord parent sent word you\'d be coming." He steps aside. "Mind the debt you owe them. They paid handsomely for this welcome."',
                 null, 40, false, null,
             ],
             [
@@ -56,7 +56,7 @@ class NodesSeeder extends Seeder
                 'TRUNK_05',
                 'Chapter I: Prologue',
                 'The Red Keep',
-                'You are ushered through corridors of red stone and shadows that move on their own. At last, the throne room opens before you: five hundred swords fused into a single monstrosity. The King sits atop it, bored and slightly drunk. He smiles. It is not a kind smile.',
+                'You are ushered through corridors of red stone and shadows that move on their own. At last, the throne room opens before you: five hundred swords fused into a single monstrosity. The King sits atop it, bored and slightly drunk. He looks at you with curious eyes. "So you\'re the one your [house] sent. They say you have their blood — but not their name. Perhaps you\'ll prove more useful than your predecessors." He smiles. It is not a kind smile.',
                 null, 40, false, null,
             ],
 
@@ -469,18 +469,18 @@ class NodesSeeder extends Seeder
 
         foreach ($nodes as $row) {
             DB::table('nodes')->updateOrInsert(['id' => $row[0]], [
-                'id'                      => $row[0],
-                'node_code'               => $row[1],
-                'chapter_label'           => $row[2],
-                'title'                   => $row[3],
-                'narrative_text'          => $row[4],
-                'debt_warning_text'       => $row[5],
-                'debt_warning_threshold'  => $row[6],
-                'is_ending'               => $row[7],
-                'art_image_path'          => null,
-                'created_at'              => $now,
-                'updated_at'              => $now,
-                'deleted_at'              => null,
+                'id' => $row[0],
+                'node_code' => $row[1],
+                'chapter_label' => $row[2],
+                'title' => $row[3],
+                'narrative_text' => $row[4],
+                'debt_warning_text' => $row[5],
+                'debt_warning_threshold' => $row[6],
+                'is_ending' => $row[7],
+                'art_image_path' => null,
+                'created_at' => $now,
+                'updated_at' => $now,
+                'deleted_at' => null,
             ]);
         }
     }

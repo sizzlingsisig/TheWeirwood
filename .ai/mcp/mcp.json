@@ -6,6 +6,15 @@
         "C:\\Users\\cj\\Downloads\\CMSC129\\TheWeirwood\\artisan",
         "boost:mcp"
       ]
+    },
+    "herd": {
+      "command": "C:\\php\\php.exe",
+      "args": [
+        "C:/Users/cj/.config/herd/bin/herd-mcp.phar"
+      ],
+      "env": {
+        "SITE_PATH": "C:\\Users\\cj\\Downloads\\CMSC129\\TheWeirwood"
+      }
     }
   }
 }

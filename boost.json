@@ -9,6 +9,7 @@
     "mcp": true,
     "sail": false,
     "skills": [
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-specialist"
     ]
 }

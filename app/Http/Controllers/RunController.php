@@ -3,63 +3,34 @@
 namespace App\Http\Controllers;
 
 use App\Models\Run;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class RunController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $player = $user->players()->first();
+
+        $runs = Run::where('player_id', $player?->id)
+            ->with(['house', 'endingNode'])
+            ->orderBy('completed_at', 'desc')
+            ->get();
+
+        return view('runs.index', compact('runs'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
     public function show(Run $run)
     {
-        //
-    }
+        $user = Auth::user();
+        $player = $user->players()->first();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Run $run)
-    {
-        //
-    }
+        if ($run->player_id !== $player?->id) {
+            abort(403);
+        }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Run $run)
-    {
-        //
-    }
+        $run->load(['game.gameSteps.choice', 'house', 'endingNode', 'startingNode']);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Run $run)
-    {
-        //
+        return view('runs.show', compact('run'));
     }
 }

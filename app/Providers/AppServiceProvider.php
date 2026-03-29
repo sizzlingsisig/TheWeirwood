@@ -31,5 +31,9 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('delete-houses', function ($user) {
             return $user && $user->isAdmin();
         });
+
+        Gate::define('play-games', function ($user) {
+            return $user && $user->players()->exists();
+        });
     }
 }

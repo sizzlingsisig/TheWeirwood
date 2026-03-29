@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Node extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'node_code',
         'chapter_label',
@@ -23,13 +25,18 @@ class Node extends Model
         'debt_warning_threshold' => 'integer',
     ];
 
-    public function choices(): HasMany
+    public function choices()
     {
         return $this->hasMany(Choice::class, 'from_node_id');
     }
 
-    public function nextNodes(): HasMany
+    public function nextNodes()
     {
         return $this->hasMany(Choice::class, 'to_node_id');
+    }
+
+    public function ending()
+    {
+        return $this->hasOne(Ending::class);
     }
 }

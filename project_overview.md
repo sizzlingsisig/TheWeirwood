@@ -1,163 +1,200 @@
 # Project Overview: The Weirwood
 
-## 1. Identity & Meta-Progression
-## Executive Summary
-The Weirwood Decision Simulator is a web-based, interactive political drama engine with roguelite progression. Players navigate a branching narrative where choices affect three core resources: **Honor, Power, and Debt**. The app features a playable "Simulator" frontend and an "Archivist" CMS backend for constructing the Directed Acyclic Graph (DAG) that drives the story.
+The Weirwood is a web-based, interactive political drama engine with roguelite progression. Players navigate a branching narrative where choices affect three core resources: **Honor, Power, and Debt**. The app features a playable "Simulator" frontend and an "Archivist" CMS backend.
 
 ---
 
-## Core Mechanics
+## Lore: The Bastard's Return
 
-### Roguelite Progression (Story & Unlocks)
-- All new accounts start as "The Wanderer" (no house, base stats: 50 Honor, 50 Power, 20 Debt).
-- Unlocking Houses: Reaching certain Endings permanently unlocks Houses for the user (via `house_user` pivot).
-- Asymmetrical Starts: Unlocked Houses change starting stats and available narrative branches.
-- House-Gated Content: Some Choices/Endings require specific Houses to access.
+You are the **bastard child of a Great House** — a Stark, Lannister, Targaryen, Baratheon, Tyrell, Martell, Tully, Arryn, or Greyjoy. Born of noble blood but denied the name, you were sent away as a child to live in obscurity.
 
-### Triangle of Tension
-- **Honor (0-100):** Social capital. Required for "good" endings. Hitting 0 = game over.
-- **Power (0-100):** Survival capital. Protects from threats.
-- **Debt (0-100):** Compounding meta-stat. Hitting 100 = collapse (game over).
+Now, years later, your noble parent has summoned you to **King's Landing**. The realm is in turmoil: three Hands of the King have died in as many years, the crown is buried in debt to the Iron Bank, and the great houses circle each other like wolves.
 
-### Debt Cascade (Mathematical Core)
-- Debt increases apply multipliers to future debt changes:
-  - 0–60: 1.0x
-  - 61–80: 1.3x
-  - 81–99: 1.6x
-- High Debt Lockout: Debt ≥ 90 disables certain choices.
+**Your goal:** Navigate the deadly politics of the court, prove your worth, and either reclaim your house's legacy or forge your own path.
+
+**The twist:** Each of the 9 Great House endings unlocks that house for future playthroughs, allowing you to experience the story from different bloodlines.
 
 ---
 
-These models manage player identity and long-term unlocks.
+## Gameplay Summary
 
+1. **Choose your house** (or let the quiz decide)
+2. **Play through the story** — first chapters are shared, then branch based on your house
+3. **Manage three resources:** Honor, Power, and Debt
+4. **Watch the Iron Bank's debt compound** if you borrow too heavily
+5. **Reach one of 13 endings** — 4 common endings + 9 house-specific endings
+
+---
+
+## The Rules
+
+### 1. The Boundary Rules (Stat Clamping)
+
+- **Honor** and **Power**: Strictly bound between 0 and 100. If a choice gives +20 but player is at 90, they cap at 100.
+- **Debt**: Has a hard floor of 0 (cannot go negative), but can technically exceed 100 mathematically right before triggering game over.
+
+### 2. The Iron Bank Rules (Debt Cascade)
+
+Debt is the only stat that aggressively fights back against the player.
+
+- **The Penalty**: If a choice adds debt (`debt_delta > 0`), the cost is multiplied based on the player's current total debt.
+- **The Relief**: If a choice reduces debt (`debt_delta < 0`), the player pays it off at a 1:1 ratio (no multiplier).
+- **The Thresholds**:
+    - Under 40 Debt = 1.0x (Normal)
+    - 40 to 59 Debt = 1.3x (Strained)
+    - 60 to 79 Debt = 1.6x (Critical)
+    - 80 to 99 Debt = 2.0x (Insolvency)
+
+### 3. The Ruin Rules (Game Over States)
+
+The game forcibly terminates if either failure state is reached at the end of a turn:
+
+- **Honor hits 0**: Player is executed, betrayed, or exiled.
+- **Debt hits 100**: The Iron Bank collects, or creditors crush the player's house.
+
+### 4. The Visibility Rules (House Gating)
+
+A player is only allowed to see or click a choice if:
+
+- **Faction Check**: The choice's `required_house_id` must either be `null` (everyone), OR must match the player's current `house_id`.
+- **Debt Lockout**: If `locks_on_high_debt` is true, the choice is hidden when player's debt is ≥ 90.
+
+### 5. The Audit Rule (The Archivist's Ledger)
+
+Every click must record:
+
+- Exact state before the math (honor_before, power_before, debt_before)
+- Exact state after the math (honor_after, power_after, debt_after)
+- The debt multiplier applied (if any)
+- Threshold crossings in the debt_events table
+
+---
+
+## User Experience
+
+### The Guest Experience
+
+The **Landing Page** serves as the front door for unauthenticated users. It features the game's title, a brief hook about the narrative and the Iron Bank, and clear buttons to log in or register.
+
+### The Player Hub
+
+The **Homepage** is the authenticated user's dashboard. It displays:
+
+- Total runs completed
+- Current active house
+- A prominent "Start New Game" button
+
+**PLAY** is the gateway to the game engine. Players select their starting path:
+
+- **Map**: Choose a specific house
+- **Quiz**: Answer questions to determine best fit
+- **Blind/Wanderer**: Random start
+
+The backend generates the Game record and pushes them into the narrative.
+
+### The Player's Legacy
+
+**Run History** displays past sessions in a chronological table showing:
+
+- Final Honor, Power, and Debt
+- Verdict received
+- Clicking a run shows the detailed chronicle of that playthrough
+
+**Houses Catalogue** displays unlocked faction sigils with starting stats. Locked houses are silhouetted to encourage replayability.
+
+**Endings Catalogue** shows discovered narrative conclusions out of 13 total.
+
+Both under a "Collections" dropdown in navigation.
+
+### The Developer's Domain
+
+**Admin Dashboard** is locked behind an administrator role. This is the Archivist command center for managing nodes, choices, and game content without database software.
+
+---
+
+## Data Models
 
 ### User
-- **hasMany Players:** A registered account can create multiple player profiles.
-- **belongsToMany Houses:** The houses this user has permanently unlocked (via `house_user` pivot).
 
-### User
-
-
+- `hasMany` Players
+- `belongsToMany` Houses (unlocked via `house_user` pivot)
 
 ### Player
-- **belongsTo User:** The account this profile belongs to.
 
-- **hasMany Games:** Simulator sessions started by this player.
+- `belongsTo` User
+- `hasMany` Games
 
+### House
 
+- `hasMany` Games
+- Starting stats: honor, power, debt
+- Sigil artwork
 
 ### Node
 
+- `hasMany` Choices (outgoing)
+- `hasOne` Ending (optional)
+- Narrative text, artwork, chapter label
 
 ### Choice
 
-- **belongsTo Origin Node:** The room this choice starts in.
+- `belongsTo` fromNode (origin)
+- `belongsTo` toNode (destination)
+- `belongsTo` requiredHouse (optional - gates content)
+- Deltas: honor_delta, power_delta, debt_delta
+- Boolean: locks_on_high_debt
 
-- **belongsTo Unlocked House:** The house this ending grants to the user.
+### Game
 
+- `belongsTo` Player
+- `belongsTo` House
+- `belongsTo` currentNode
+- Stats: honor, power, debt
+- `hasMany` GameSteps
+- `hasMany` DebtEvents
+- `hasOne` Run (when complete)
 
+### GameStep
 
-
-
-- **hasOne Run:** Summary record if complete.
-
-- **hasMany Debt Events:** Log of mechanic triggers.
-
-- **belongsTo Game:** The session this step belongs to.
-- **belongsTo Choice:** The edge/door the player clicked.
-### Run
-- **belongsTo Game:** The session this run summarizes.
+- `belongsTo` Game
+- `belongsTo` Choice
+- Records: honor_before/after, power_before/after, debt_before/after, debt_multiplier_applied
 
 ### DebtEvent
-- **belongsTo Trigger Node:** The room where the debt cascade activated.
 
+- `belongsTo` Game
+- Records: event_type, debt_value_at_event, multiplier_used, triggered_at_node
 
-## Summary Diagram (Textual)
-- User
-  - hasMany → Player
-  - belongsToMany → House
-  - belongsToMany → User
-- Player
-  - hasMany → Game, Run
+### Run
 
-
-  - hasMany → Choice (outgoing/incoming)
-
-  - hasOne → Ending
-- Authenticated via Laravel Breeze
-- Manages static content (Nodes, Choices, Endings)
-- CRUD operations with soft deletes (archiving)
-- Media management: Upload scene artwork (jpg/png)
-- Content filtering: Search nodes by chapter_label or title
-
-- Choice
-- Registration required to save House unlocks
-- Session tracking: Game record with stats and current_node_id
-- Dynamic UI: Renders narrative, art, and available choices
-- Audit trail: Every click logs a GameStep with stat deltas and multipliers
+- `belongsTo` Game
+- Summary: final_honor, final_power, final_debt, steps_taken, is_victory
+- Unlocks: unlocked_house_id
 
 ---
 
-  - belongsTo → Node (origin/destination)
+## Technology Stack
 
-- **Framework:** Laravel 11 (PHP 8.2+)
+- **Framework:** Laravel 12 (PHP 8.4)
 - **Database:** PostgreSQL
 - **Authentication:** Laravel Breeze (Blade Stack)
-- **Frontend:** Blade Templating Engine + Tailwind CSS
-- **State Machine:** Deterministic Finite Automaton (DFA) via Eloquent relationships
+- **Frontend:** Blade + Tailwind CSS
+- **Game Engine:** App\Services\GameEngineService
 
 ---
 
-  - belongsTo (optional) → House
+## Routes Overview
 
-| Lab Requirement   | Application Feature         | Implementation Strategy                                 |
-|-------------------|----------------------------|---------------------------------------------------------|
-| Basic CRUD        | Archivist Dashboard        | Resource Controllers for Node, Choice, and Ending       |
-| Complex Logic     | Debt Cascade               | GameController@makeChoice multiplier math               |
-| Relationships     | DAG Engine & Progression   | Node HasMany Choices, User BelongsToMany Houses         |
-| Soft Deletes      | Branch Archiving           | deleted_at timestamps on all core tables                |
-| File Uploads      | Scene & Sigil Art          | Laravel Storage facade for art_image_path               |
-| Search/Filter     | Dashboard Search           | Eloquent where('title', 'like', ...) queries            |
-| Database Seeder   | Story Pre-load             | StorySeeder class populates nodes and endings           |
-
----
-
-- Ending
-
-- **Theme:** "Dark Medieval" (Candlelight)
-- **Colors:** Deep charcoal (#1a1a1a), parchment (#e0d8c0), blood-red (#8b0000) for high-debt
-- **Typography:** Cinzel (titles), Crimson Text (narrative)
-- **Feedback:** Sticky CSS transitions for stat bars
-
----
-
-  - belongsTo → Node
-
-- House Stark (North)
-- House Greyjoy (Iron Islands)
-- House Tully (Riverlands)
-- House Arryn (Vale)
-- House Lannister (West)
-- House Baratheon (Stormlands)
-- House Tyrell (Reach)
-- House Martell (Dorne)
-- House Targaryen (special)
-
----
-
-This overview summarizes the domain model, backend structure, and product requirements for The Weirwood, supporting identity, story content, gameplay session tracking, and lab compliance.
-  - belongsTo → House
-- Game
-  - belongsTo → Player, Node
-  - hasOne → Run
-  - hasMany → GameStep, DebtEvent
-- GameStep
-  - belongsTo → Game, Choice
-- Run
-  - belongsTo → Game, Node
-- DebtEvent
-  - belongsTo → Game, Node
-
----
-
-This overview summarizes the domain model and relationships for The Weirwood, supporting identity, story content, and gameplay session tracking.
+| Route                           | Controller                | Description             |
+| ------------------------------- | ------------------------- | ----------------------- |
+| `/`                             | Home                      | Landing page            |
+| `/dashboard`                    | Dashboard                 | Player hub              |
+| `/games`                        | GameController@index      | Game list / Run history |
+| `/games/start`                  | GameController@start      | Start new game          |
+| `/games/{game}/play`            | GameController@play       | Play current node       |
+| `/games/{game}/choice/{choice}` | GameController@makeChoice | Submit choice           |
+| `/games/{game}/end`             | GameController@endGame    | Game over screen        |
+| `/houses`                       | HouseController           | Houses catalogue        |
+| `/nodes`                        | NodeController            | Archivist - Nodes       |
+| `/choices`                      | ChoiceController          | Archivist - Choices     |
+| `/players`                      | PlayerController          | Player management       |
