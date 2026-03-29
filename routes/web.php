@@ -14,12 +14,11 @@ use Illuminate\Support\Facades\Route;
 // ── PUBLIC ROUTES ──
 Route::get('/', function () {
     return view('welcome');
-})->name('home');
-
+})->name('landing');
 
 // ── PROTECTED ROUTES (Archivist & Player) ──
 Route::middleware(['auth'])->group(function () {
-    
+
     // The Archivist: Static Content CRUD
     Route::resource('houses', HouseController::class);
     Route::resource('nodes', NodeController::class);
