@@ -23,7 +23,7 @@
         {{ $userHasHouse ? $house->name : 'Unknown House' }}
     </h2>
     <p class="font-['Crimson_Text'] italic text-center mb-6 {{ $userHasHouse ? 'text-[#B8860B]' : 'text-[#6B5A4E]' }}">
-        {{ $userHasHouse && $house->motto ? '"' . $house->motto . '"' : '"Words lost to time"' }}
+        {{ $userHasHouse && $house->motto ? '"' . $house->motto . '"' : '???' }}
     </p>
 
     {{-- ── OPENING STATS ── --}}
