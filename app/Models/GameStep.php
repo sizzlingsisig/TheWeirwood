@@ -23,6 +23,7 @@ class GameStep extends Model
         'power_after',
         'debt_after',
         'debt_multiplier_applied',
+        'weighted_success_penalty',
         'chosen_at',
     ];
 
@@ -35,6 +36,7 @@ class GameStep extends Model
         'power_after' => 'integer',
         'debt_after' => 'integer',
         'debt_multiplier_applied' => 'float',
+        'weighted_success_penalty' => 'integer',
         'chosen_at' => 'datetime',
     ];
 

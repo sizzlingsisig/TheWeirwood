@@ -516,4 +516,90 @@ class GameTest extends TestCase
 
         $this->assertFalse($choice->meetsRequirements($game));
     }
+
+    public function test_weighted_success_penalty_applied_when_low_power(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'house_id' => $this->house->id,
+            'current_node_id' => $this->startNode->id,
+            'honor' => 50,
+            'power' => 30,
+            'debt' => 20,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'power_delta' => 10,
+            'debt_delta' => 5,
+        ]);
+
+        $this->actingAs($this->user)->post("/games/{$game->id}/choice/{$choice->id}");
+
+        $game->refresh();
+
+        $this->assertEquals(40, $game->debt);
+    }
+
+    public function test_no_weighted_success_penalty_with_high_power(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'house_id' => $this->house->id,
+            'current_node_id' => $this->startNode->id,
+            'honor' => 50,
+            'power' => 50,
+            'debt' => 20,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'power_delta' => 10,
+            'debt_delta' => 5,
+        ]);
+
+        $this->actingAs($this->user)->post("/games/{$game->id}/choice/{$choice->id}");
+
+        $game->refresh();
+
+        $this->assertEquals(25, $game->debt);
+    }
+
+    public function test_dynamic_choice_text_replaces_house_placeholder(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'house_id' => $this->house->id,
+            'current_node_id' => $this->startNode->id,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'choice_text' => '[House] draws their steel!',
+        ]);
+
+        $dynamicText = $choice->getDynamicText($game);
+
+        $this->assertEquals("{$this->house->name} draws their steel!", $dynamicText);
+    }
+
+    public function test_choice_with_min_power_requirement(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+            'power' => 30,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'requirements_json' => ['min_power' => 40],
+        ]);
+
+        $this->assertFalse($choice->meetsRequirements($game));
+    }
 }

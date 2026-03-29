@@ -69,6 +69,13 @@ class Choice extends Model
         return $this->belongsTo(Node::class, 'from_node_id');
     }
 
+    public function getDynamicText(Game $game): string
+    {
+        $houseName = $game->house?->name ?? 'Wanderer';
+
+        return str_replace('[House]', $houseName, $this->choice_text);
+    }
+
     public function toNode(): BelongsTo
     {
         return $this->belongsTo(Node::class, 'to_node_id');

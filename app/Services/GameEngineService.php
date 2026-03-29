@@ -21,15 +21,17 @@ class GameEngineService
 
         $multiplier = $this->calculateDebtMultiplier($debtBefore);
 
+        $debtPenalty = $this->calculateWeightedSuccessPenalty($game, $choice);
+
         $actualDebtDelta = $choice->debt_delta > 0
-            ? (int) ($choice->debt_delta * $multiplier)
+            ? (int) (($choice->debt_delta + $debtPenalty) * $multiplier)
             : $choice->debt_delta;
 
         $newHonor = max(0, min(100, $honorBefore + ($choice->honor_delta ?? 0)));
         $newPower = max(0, min(100, $powerBefore + ($choice->power_delta ?? 0)));
         $newDebt = min(100, max(0, $debtBefore + $actualDebtDelta));
 
-        DB::transaction(function () use ($game, $choice, $honorBefore, $powerBefore, $debtBefore, $newHonor, $newPower, $newDebt, $multiplier) {
+        DB::transaction(function () use ($game, $choice, $honorBefore, $powerBefore, $debtBefore, $newHonor, $newPower, $newDebt, $multiplier, $debtPenalty) {
             $game->update([
                 'current_node_id' => $choice->to_node_id,
                 'honor' => $newHonor,
@@ -48,6 +50,7 @@ class GameEngineService
                 'power_after' => $newPower,
                 'debt_after' => $newDebt,
                 'debt_multiplier_applied' => $multiplier,
+                'weighted_success_penalty' => $debtPenalty,
                 'chosen_at' => now(),
             ]);
 
@@ -124,7 +127,7 @@ class GameEngineService
         return $node?->id ?? Node::where('node_code', 'TRUNK_01')->firstOrFail()->id;
     }
 
-    private function calculateDebtMultiplier(int $currentDebt): float
+    public function calculateDebtMultiplier(int $currentDebt): float
     {
         if ($currentDebt >= 80) {
             return 2.0;
@@ -137,6 +140,15 @@ class GameEngineService
         }
 
         return 1.0;
+    }
+
+    private function calculateWeightedSuccessPenalty(Game $game, Choice $choice): int
+    {
+        if ($choice->power_delta > 0 && $game->power < 40) {
+            return 15;
+        }
+
+        return 0;
     }
 
     private function logDebtEventsIfTriggered(Game $game, int $oldDebt, int $newDebt, float $multiplier, int $nodeId): void

@@ -84,7 +84,10 @@ class GameController extends Controller
 
         $availableChoices = $this->getAvailableChoices($game);
 
-        return view('games.play', compact('game', 'availableChoices'));
+        $currentMultiplier = $this->engine->calculateDebtMultiplier($game->debt);
+        $riskLevel = $currentMultiplier > 1.5 ? 'High' : 'Low';
+
+        return view('games.play', compact('game', 'availableChoices', 'currentMultiplier', 'riskLevel'));
     }
 
     public function makeChoice(Request $request, Game $game, Choice $choice)
@@ -142,6 +145,10 @@ class GameController extends Controller
                 }
 
                 if ($choice->locks_on_high_debt && $game->debt >= 90) {
+                    return false;
+                }
+
+                if (! $choice->meetsRequirements($game)) {
                     return false;
                 }
 
