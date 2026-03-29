@@ -43,14 +43,12 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium mb-1">Entry Mode</label>
                 <select name="entry_mode" class="form-select w-full" required>
-                    <option value="commoner">Commoner (Standard)</option>
-                    <option value="quiz">Quiz (Test your knowledge)</option>
-                    <option value="map">Map (Choose your path)</option>
-                    <option value="blind">Blind (Random start)</option>
+                    <option value="blind" {{ Auth::user()->houses->isEmpty() ? '' : 'selected' }}>Blind (Random start)</option>
+                    <option value="map" {{ Auth::user()->houses->isEmpty() ? 'disabled' : '' }}>Map (Choose your path)</option>
                 </select>
             </div>
 
-            <button type="submit" class="btn btn-primary" {{ Auth::user()->houses->isEmpty() ? 'disabled' : '' }}>
+            <button type="submit" class="btn btn-primary">
                 Start Game
             </button>
         </form>

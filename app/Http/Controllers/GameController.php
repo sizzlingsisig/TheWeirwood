@@ -47,19 +47,37 @@ class GameController extends Controller
 
     public function start(Request $request)
     {
+        $user = Auth::user();
+        $userHouses = $user->houses()->pluck('houses.id');
+
         $request->validate([
-            'house_id' => 'required|exists:houses,id',
             'region_id' => 'nullable|exists:regions,id',
-            'entry_mode' => 'required|in:commoner,quiz,map,blind',
+            'entry_mode' => 'required|in:map,blind',
         ]);
 
-        $user = Auth::user();
+        if ($request->entry_mode === 'map') {
+            $request->validate([
+                'house_id' => 'required|exists:houses,id',
+            ]);
+
+            if ($userHouses->isEmpty()) {
+                return back()->with('error', 'You must unlock at least one house before using Map mode.');
+            }
+
+            if (! $userHouses->contains($request->house_id)) {
+                return back()->with('error', 'You have not unlocked this house yet.');
+            }
+        }
 
         $player = $user->players()->firstOrCreate([
             'display_name' => $user->name,
         ]);
 
-        $house = House::findOrFail($request->house_id);
+        if ($request->entry_mode === 'blind') {
+            $house = House::inRandomOrder()->first();
+        } else {
+            $house = House::findOrFail($request->house_id);
+        }
 
         $game = Game::create([
             'player_id' => $player->id,

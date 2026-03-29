@@ -11,34 +11,40 @@ use App\Http\Controllers\RunController;
 use App\Http\Controllers\Settings;
 use Illuminate\Support\Facades\Route;
 
+// ── PUBLIC ROUTES ──
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::middleware('auth')->group(function () {});
 
-Route::resource('houses', HouseController::class);
-
-Route::resource('nodes', NodeController::class);
-Route::resource('choices', ChoiceController::class);
-
+// ── PROTECTED ROUTES (Archivist & Player) ──
 Route::middleware(['auth'])->group(function () {
-    Route::resource('players', PlayerController::class);
+    
+    // The Archivist: Static Content CRUD
+    Route::resource('houses', HouseController::class);
+    Route::resource('nodes', NodeController::class);
+    Route::resource('choices', ChoiceController::class);
+    Route::resource('endings', EndingController::class); // Upgraded to full resource
 
+    // The Player: Meta-Progression
+    Route::resource('players', PlayerController::class);
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::get('/games', [GameController::class, 'index'])->name('games.index');
-    Route::get('/games/create', [GameController::class, 'create'])->name('games.create');
-    Route::post('/games/start', [GameController::class, 'start'])->name('games.start');
-    Route::get('/games/{game}/play', [GameController::class, 'play'])->name('games.play');
-    Route::post('/games/{game}/choice/{choice}', [GameController::class, 'makeChoice'])->name('games.choice');
-    Route::get('/games/{game}/end', [GameController::class, 'endGame'])->name('games.end');
+    // The Engine: Gameplay Loop
+    Route::prefix('games')->name('games.')->group(function () {
+        Route::get('/', [GameController::class, 'index'])->name('index');
+        Route::get('/create', [GameController::class, 'create'])->name('create');
+        Route::post('/start', [GameController::class, 'start'])->name('start');
+        Route::get('/{game}/play', [GameController::class, 'play'])->name('play');
+        Route::post('/{game}/choice/{choice}', [GameController::class, 'makeChoice'])->name('choice');
+        Route::get('/{game}/end', [GameController::class, 'endGame'])->name('end');
+    });
 
+    // The Archives: Run History
     Route::get('/runs', [RunController::class, 'index'])->name('runs.index');
     Route::get('/runs/{run}', [RunController::class, 'show'])->name('runs.show');
 
-    Route::get('/endings', [EndingController::class, 'index'])->name('endings.index');
-
+    // Standard Breeze Profile Settings
     Route::prefix('settings')->name('settings.')->group(function () {
         Route::get('profile', [Settings\ProfileController::class, 'edit'])->name('profile.edit');
         Route::put('profile', [Settings\ProfileController::class, 'update'])->name('profile.update');

@@ -50,32 +50,61 @@ class GameTest extends TestCase
             ->assertStatus(200);
     }
 
-    public function test_user_can_start_game(): void
+    public function test_user_can_start_game_with_map_mode(): void
     {
         Node::factory()->create(['node_code' => 'TRUNK_01']);
         $this->user->houses()->attach($this->house->id, ['unlocked_at' => now()]);
 
         $response = $this->actingAs($this->user)->post('/games/start', [
             'house_id' => $this->house->id,
-            'entry_mode' => 'commoner',
+            'entry_mode' => 'map',
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('games', [
             'house_id' => $this->house->id,
-            'entry_mode' => 'commoner',
+            'entry_mode' => 'map',
             'is_complete' => false,
         ]);
     }
 
-    public function test_start_game_requires_house(): void
+    public function test_user_can_start_game_with_blind_mode(): void
     {
+        Node::factory()->create(['node_code' => 'TRUNK_01']);
+
+        $response = $this->actingAs($this->user)->post('/games/start', [
+            'entry_mode' => 'blind',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('games', [
+            'entry_mode' => 'blind',
+            'is_complete' => false,
+        ]);
+    }
+
+    public function test_start_game_requires_house_for_map_mode(): void
+    {
+        $this->user->houses()->attach($this->house->id, ['unlocked_at' => now()]);
+
         $response = $this->actingAs($this->user)->post('/games/start', [
             'house_id' => '',
-            'entry_mode' => 'commoner',
+            'entry_mode' => 'map',
         ]);
 
         $response->assertSessionHasErrors('house_id');
+    }
+
+    public function test_start_game_requires_unlocked_house_for_map_mode(): void
+    {
+        $differentHouse = House::factory()->create();
+
+        $response = $this->actingAs($this->user)->post('/games/start', [
+            'house_id' => $differentHouse->id,
+            'entry_mode' => 'map',
+        ]);
+
+        $response->assertSessionHas('error');
     }
 
     public function test_start_game_requires_valid_entry_mode(): void
