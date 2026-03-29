@@ -431,4 +431,89 @@ class GameTest extends TestCase
 
         $this->assertTrue($this->user->hasHouse($unlockHouse));
     }
+
+    public function test_game_can_set_and_get_flags(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+        ]);
+
+        $game->setFlag('spared_thief', true);
+        $game->setFlag('found_secret', false);
+
+        $this->assertTrue($game->hasFlag('spared_thief'));
+        $this->assertFalse($game->hasFlag('found_secret'));
+        $this->assertNull($game->getFlag('nonexistent'));
+    }
+
+    public function test_choice_requirements_min_honor_met(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+            'honor' => 60,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'requirements_json' => ['min_honor' => 50],
+        ]);
+
+        $this->assertTrue($choice->meetsRequirements($game));
+    }
+
+    public function test_choice_requirements_min_honor_not_met(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+            'honor' => 40,
+        ]);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'requirements_json' => ['min_honor' => 50],
+        ]);
+
+        $this->assertFalse($choice->meetsRequirements($game));
+    }
+
+    public function test_choice_requirements_required_flag(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+        ]);
+
+        $game->setFlag('spared_thief', true);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'requirements_json' => ['required_flag' => 'spared_thief'],
+        ]);
+
+        $this->assertTrue($choice->meetsRequirements($game));
+    }
+
+    public function test_choice_requirements_forbidden_flag(): void
+    {
+        $game = Game::factory()->create([
+            'player_id' => $this->player->id,
+            'current_node_id' => $this->startNode->id,
+        ]);
+
+        $game->setFlag('killed_thief', true);
+
+        $choice = Choice::factory()->create([
+            'from_node_id' => $this->startNode->id,
+            'to_node_id' => $this->nextNode->id,
+            'requirements_json' => ['forbidden_flag' => 'killed_thief'],
+        ]);
+
+        $this->assertFalse($choice->meetsRequirements($game));
+    }
 }

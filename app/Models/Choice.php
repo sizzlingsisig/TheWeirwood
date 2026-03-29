@@ -29,7 +29,40 @@ class Choice extends Model
         'power_delta' => 'integer',
         'debt_delta' => 'integer',
         'locks_on_high_debt' => 'boolean',
+        'requirements_json' => 'array',
     ];
+
+    public function getRequirements(): ?array
+    {
+        return $this->requirements_json;
+    }
+
+    public function meetsRequirements(Game $game): bool
+    {
+        $requirements = $this->getRequirements();
+
+        if (empty($requirements)) {
+            return true;
+        }
+
+        if (isset($requirements['min_honor']) && $game->honor < $requirements['min_honor']) {
+            return false;
+        }
+
+        if (isset($requirements['min_power']) && $game->power < $requirements['min_power']) {
+            return false;
+        }
+
+        if (isset($requirements['required_flag']) && ! $game->hasFlag($requirements['required_flag'])) {
+            return false;
+        }
+
+        if (isset($requirements['forbidden_flag']) && $game->hasFlag($requirements['forbidden_flag'], true)) {
+            return false;
+        }
+
+        return true;
+    }
 
     public function fromNode(): BelongsTo
     {

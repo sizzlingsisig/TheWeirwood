@@ -72,6 +72,33 @@ class Game extends Model
         return $this->hasOne(Run::class);
     }
 
+    public function flags(): HasMany
+    {
+        return $this->hasMany(GameFlag::class);
+    }
+
+    public function getFlag(string $key): ?bool
+    {
+        $flag = $this->flags()->where('flag_key', $key)->first();
+
+        return $flag?->value;
+    }
+
+    public function hasFlag(string $key, bool $value = true): bool
+    {
+        return $this->getFlag($key) === $value;
+    }
+
+    public function setFlag(string $key, bool $value = true): self
+    {
+        $this->flags()->updateOrCreate(
+            ['flag_key' => $key],
+            ['value' => $value]
+        );
+
+        return $this;
+    }
+
     public function getDebtMultiplier(): float
     {
         if ($this->debt >= 81) {
