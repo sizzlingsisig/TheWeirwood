@@ -276,60 +276,40 @@
 
             <!-- Navigation Links - Centered Column -->
             <nav class="w-full max-w-md px-4">
-                <ul class="space-y-4 text-center">
+                <ul class="space-y-6 text-center">
                     <li>
-                        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('dashboard') ? 'text-red-400' : '' }}">
+                        <a href="{{ route('dashboard') }}" @click="sidebarOpen = false" 
+                            class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('dashboard') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Dashboard
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('games.create') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('games.create') ? 'text-red-400' : '' }}">
-                            Play
+                        <a href="{{ route('games.create') }}" @click="sidebarOpen = false" 
+                            class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('games.create') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
+                            Begin Journey
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('runs.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('runs.*') ? 'text-red-400' : '' }}">
-                            Run History
+                        <a href="{{ route('runs.index') }}" @click="sidebarOpen = false" 
+                            class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('runs.*') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
+                            Chronicle
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('houses.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('houses.*') ? 'text-red-400' : '' }}">
-                            Houses
+                        <a href="{{ route('houses.index') }}" @click="sidebarOpen = false" 
+                            class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('houses.*') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
+                            Hall of Houses
                         </a>
                     </li>
 
                     <li>
-                        <a href="{{ route('endings.index') }}" @click="sidebarOpen = false" class="block py-4 text-2xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('endings.index') ? 'text-red-400' : '' }}">
+                        <a href="{{ route('endings.index') }}" @click="sidebarOpen = false" 
+                            class="block py-3 text-3xl font-bold text-white hover:text-amber-300 transition-all duration-300 hover:scale-105 {{ request()->routeIs('endings.index') ? 'text-amber-400 drop-shadow-[0_0_15px_rgba(218,165,32,0.9)]' : '' }}">
                             Endings
                         </a>
-                    </li>
-
-                    @if(Auth::user()?->is_admin)
-                    <li class="pt-8 pb-2">
-                        <span class="text-xs font-semibold text-gray-400 uppercase tracking-widest">Admin</span>
-                    </li>
-                    <li>
-                        <a href="{{ route('nodes.index') }}" @click="sidebarOpen = false" class="block py-4 text-xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('nodes.*') ? 'text-red-400' : '' }}">
-                            Nodes
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ route('choices.index') }}" @click="sidebarOpen = false" class="block py-4 text-xl font-semibold text-white hover:text-red-400 transition {{ request()->routeIs('choices.*') ? 'text-red-400' : '' }}">
-                            Choices
-                        </a>
-                    </li>
-                    @endif
-
-                    <li class="pt-8">
-                        <form method="POST" action="{{ route('logout') }}" class="inline">
-                            @csrf
-                            <button type="submit" class="text-lg text-gray-400 hover:text-white transition">
-                                Logout
-                            </button>
-                        </form>
                     </li>
                 </ul>
             </nav>

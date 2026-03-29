@@ -63,7 +63,7 @@
 
         <!-- Actions -->
         <div class="flex gap-4 justify-center">
-            <a href="{{ route('games.index') }}" class="btn btn-primary">Back to Games</a>
+            <a href="{{ route('dashboard') }}" class="btn btn-primary">Return to Dashboard</a>
         </div>
     </div>
 </x-layouts.app>

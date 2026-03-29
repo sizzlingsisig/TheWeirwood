@@ -9,8 +9,7 @@ class RunController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-        $player = $user->players()->first();
+        $player = $this->getPlayer();
 
         $runs = Run::where('player_id', $player?->id)
             ->with(['house', 'endingNode'])
@@ -22,8 +21,7 @@ class RunController extends Controller
 
     public function show(Run $run)
     {
-        $user = Auth::user();
-        $player = $user->players()->first();
+        $player = $this->getPlayer();
 
         if ($run->player_id !== $player?->id) {
             abort(403);
@@ -32,5 +30,10 @@ class RunController extends Controller
         $run->load(['game.gameSteps.choice', 'house', 'endingNode', 'startingNode']);
 
         return view('runs.show', compact('run'));
+    }
+
+    private function getPlayer()
+    {
+        return Auth::user()->players()->first();
     }
 }

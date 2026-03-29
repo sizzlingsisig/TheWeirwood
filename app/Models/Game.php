@@ -99,18 +99,6 @@ class Game extends Model
         return $this;
     }
 
-    public function getDebtMultiplier(): float
-    {
-        if ($this->debt >= 81) {
-            return 1.6;
-        }
-        if ($this->debt >= 61) {
-            return 1.3;
-        }
-
-        return 1.0;
-    }
-
     public function isGameOver(): bool
     {
         return $this->honor <= 0 || $this->debt >= 100;

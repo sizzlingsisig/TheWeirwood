@@ -31,7 +31,6 @@ Route::middleware(['auth'])->group(function () {
 
     // The Engine: Gameplay Loop
     Route::prefix('games')->name('games.')->group(function () {
-        Route::get('/', [GameController::class, 'index'])->name('index');
         Route::get('/create', [GameController::class, 'create'])->name('create');
         Route::post('/start', [GameController::class, 'start'])->name('start');
         Route::get('/{game}/play', [GameController::class, 'play'])->name('play');
