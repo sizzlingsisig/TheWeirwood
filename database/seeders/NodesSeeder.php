@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\DB;
  * END_MART  45  END_TUL  46  END_ARR  47  END_GREY  48
  * THIEF_MERCY 49   THIEF_BLOOD 50   LETTER_REVEAL 51   LETTER_MISS 52
  */
-class NodeSeeder extends Seeder
+class NodesSeeder extends Seeder
 {
     private const N = [
         'TRUNK_01' => 1, 'TRUNK_02' => 2, 'TRUNK_03' => 3,
@@ -96,12 +96,7 @@ class NodeSeeder extends Seeder
 
         // Row format:
         // [id, node_code, chapter_label, title, narrative_text,
-        //  debt_warning_text, debt_warning_threshold, is_ending, required_house_id]
-        //
-        // Flag-consequence nodes use required_house_id = null (flags are
-        // checked by the GameEngine at choice-evaluation time, not here).
-        // The node itself is reachable by any house — the choice leading
-        // to it carries the required_flag / forbidden_flag constraint.
+        //  debt_warning_text, debt_warning_threshold, is_ending]
 
         $nodes = [
 
@@ -116,31 +111,31 @@ class NodeSeeder extends Seeder
                 $n['TRUNK_01'], 'TRUNK_01', 'Chapter I: Prologue',
                 'The Raven Arrives',
                 'A black-waxed scroll drops onto the rushes of your modest hall. The seal is broken — a crown pressed into wax the colour of dried blood. The message is brief: "The Hand is dead. The King requires counsel. Come to King\'s Landing." Silence falls over your table. This is not an invitation. It is a leash.',
-                null, 40, false, null,
+                null, 40, false,
             ],
             [
                 $n['TRUNK_02'], 'TRUNK_02', 'Chapter I: Prologue',
                 'The Road South',
                 'Your column leaves at dawn, banners furled against the mist. Old Maester Edwyn rides beside you, his chains clinking a worried rhythm. "They say three Hands have died in as many years," he murmurs. "One from fever, one from grief, and one they simply... stopped talking about." The King\'s Road stretches south like a wound in the earth. Near the Crossroads, your outriders drag a thin boy from a ditch — caught stealing a horse from a merchant\'s camp. The merchant demands a hand. The boy says nothing. He is perhaps ten years old.',
-                null, 40, false, null,
+                null, 40, false,
             ],
             [
                 $n['TRUNK_03'], 'TRUNK_03', 'Chapter I: Prologue',
                 'The Inn at the Crossroads',
                 'Three cloaked riders share your inn\'s common room, arriving separately yet pretending not to know each other. The innkeeper sweats despite the cold. One rider slides a velvet pouch across a table — coins inside ring silver, far too many for any honest errand. They are watching you. Your servants have been in the stables long enough to overhear things. There may be more to this meeting than coin.',
-                null, 40, false, null,
+                null, 40, false,
             ],
             [
                 $n['TRUNK_04'], 'TRUNK_04', 'Chapter I: Prologue',
                 'The Gates of King\'s Landing',
                 'The city assaults every sense at once: a thousand cook-fires, the cry of gulls over the Blackwater, the damp rot of the harbor district. A Gold Cloak captain bars your way. "Business?" he asks, though his eyes say he already knows the answer — and that the answer will cost you.',
-                null, 40, false, null,
+                null, 40, false,
             ],
             [
                 $n['TRUNK_05'], 'TRUNK_05', 'Chapter I: Prologue',
                 'The Red Keep',
                 'You are ushered through corridors of red stone and shadows that move on their own. At last, the throne room opens before you: five hundred swords fused into a single monstrosity. The King sits atop it, bored and slightly drunk. He smiles. It is not a kind smile.',
-                null, 40, false, null,
+                null, 40, false,
             ],
 
             // ══════════════════════════════════════════════════════
@@ -504,7 +499,6 @@ class NodeSeeder extends Seeder
                 'debt_warning_threshold' => $row[6],
                 'is_ending' => $row[7],
                 'art_image_path' => null,
-                'required_house_id' => $row[8],
                 'created_at' => $now,
                 'updated_at' => $now,
                 'deleted_at' => null,
