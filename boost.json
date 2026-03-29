@@ -1,13 +1,15 @@
 {
     "agents": [
-        "junie",
-        "opencode"
+        "copilot",
+        "opencode",
+        "junie"
     ],
     "guidelines": true,
-    "herd_mcp": false,
+    "herd_mcp": true,
     "mcp": true,
     "sail": false,
     "skills": [
-        "tailwindcss-development"
+        "tailwindcss-development",
+        "laravel-specialist"
     ]
 }
