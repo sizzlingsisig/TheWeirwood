@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\DB;
  *
  * DEPENDENCY: NodeSeeder must run first.
  *
+ * MEDIUM TRIM VERSION — Merged Chapters
+ * ──────────────────────────────────────────────────────────────────
+ * Ch I+II merged: TRUNK_01-03 (was 10 nodes)
+ * Ch III branching: TRUNK_04-08 (was TRUNK_11-15)
+ * Flag payoffs integrated directly into branching choices
+ * No separate flag-consequence nodes
+ *
  * ──────────────────────────────────────────────────────────────────
  * COLUMNS ON choices TABLE
  * ──────────────────────────────────────────────────────────────────
@@ -33,56 +40,53 @@ use Illuminate\Support\Facades\DB;
  * ──────────────────────────────────────────────────────────────────
  *
  *  spared_thief
- *    Set:      TRUNK_02 order 4 (spare the boy)
- *    Required: TRUNK_14 order 4 (mercy council shortcut)
+ *    Set:      TRUNK_01 order 4 (spare the boy)
+ *    Required: TRUNK_07 order 4 (mercy council shortcut)
  *    Echoes:   STARK_A order 3, TUL_A order 3 (regional recognition)
- *    Forbidden: TRUNK_11 order 4 (ruthlessness check)
+ *    Forbidden: TRUNK_04 order 4 (ruthlessness check)
  *
  *  killed_thief
- *    Set:      TRUNK_02 order 5 (hand the boy)
- *    Required: TRUNK_11 order 4, BARA_A order 3, GREY_A order 3
- *    Forbidden: TRUNK_14 order 4, TARG_A order 4
+ *    Set:      TRUNK_01 order 5 (hand the boy)
+ *    Required: TRUNK_04 order 4, BARA_A order 3, GREY_A order 3
+ *    Forbidden: TRUNK_07 order 4, TARG_A order 4
  *
  *  found_secret_letter
- *    Set:      TRUNK_03 order 4 (search the saddlebags)
- *    Required: TRUNK_07 order 4, TRUNK_13 order 4, LANN_A order 3
- *    Routes:   TRUNK_12 order 4 → LETTER_REVEAL (vs order 5 → LETTER_MISS)
+ *    Set:      TRUNK_02 order 4 (search the saddlebags)
+ *    Required: TRUNK_06 order 4, LANN_A order 3
  *
  * ──────────────────────────────────────────────────────────────────
- * NODE IDS
+ * NODE IDS (shifted for medium trim)
  * ──────────────────────────────────────────────────────────────────
- * Trunk 1-15 | Branches 16-35 | Endings 36-48
- * THIEF_MERCY 49 | THIEF_BLOOD 50 | LETTER_REVEAL 51 | LETTER_MISS 52
+ * Trunk 1-8 | House branches 9-28 | Endings 29-41
  */
 class ChoicesSeeder extends Seeder
 {
     private const N = [
+        // Merged Ch I+II (3 nodes) → Ch III (5 nodes) = TRUNK_01-08
         'TRUNK_01' => 1, 'TRUNK_02' => 2, 'TRUNK_03' => 3,
         'TRUNK_04' => 4, 'TRUNK_05' => 5, 'TRUNK_06' => 6,
-        'TRUNK_07' => 7, 'TRUNK_08' => 8, 'TRUNK_09' => 9,
-        'TRUNK_10' => 10, 'TRUNK_11' => 11, 'TRUNK_12' => 12,
-        'TRUNK_13' => 13, 'TRUNK_14' => 14, 'TRUNK_15' => 15,
-        'STARK_A' => 16, 'STARK_B' => 17,
-        'LANN_A' => 18, 'LANN_B' => 19,
-        'TARG_A' => 20, 'TARG_B' => 21,
-        'BARA_A' => 22, 'BARA_B' => 23,
-        'TYR_A' => 24, 'TYR_B' => 25,
-        'MART_A' => 26, 'MART_B' => 27,
-        'TUL_A' => 28, 'TUL_B' => 29,
-        'ARR_A' => 30, 'ARR_B' => 31,
-        'GREY_A' => 32, 'GREY_B' => 33,
-        'COMM_A' => 34, 'COMM_B' => 35,
-        'END_COMM_GOOD' => 36, 'END_COMM_BAD' => 37,
-        'END_COMM_DEBT' => 38, 'END_COMM_HONOR' => 39,
-        'END_STARK' => 40, 'END_LANN' => 41,
-        'END_TARG' => 42, 'END_BARA' => 43,
-        'END_TYR' => 44, 'END_MART' => 45,
-        'END_TUL' => 46, 'END_ARR' => 47,
-        'END_GREY' => 48,
-        'THIEF_MERCY' => 49,
-        'THIEF_BLOOD' => 50,
-        'LETTER_REVEAL' => 51,
-        'LETTER_MISS' => 52,
+        'TRUNK_07' => 7, 'TRUNK_08' => 8,
+
+        // House branches — shifted
+        'STARK_A' => 9,  'STARK_B' => 10,
+        'LANN_A' => 11,  'LANN_B' => 12,
+        'TARG_A' => 13,  'TARG_B' => 14,
+        'BARA_A' => 15,  'BARA_B' => 16,
+        'TYR_A' => 17,   'TYR_B' => 18,
+        'MART_A' => 19,  'MART_B' => 20,
+        'TUL_A' => 21,   'TUL_B' => 22,
+        'ARR_A' => 23,   'ARR_B' => 24,
+        'GREY_A' => 25,  'GREY_B' => 26,
+        'COMM_A' => 27,  'COMM_B' => 28,
+
+        // Endings — shifted
+        'END_COMM_GOOD' => 29, 'END_COMM_BAD' => 30,
+        'END_COMM_DEBT' => 31, 'END_COMM_HONOR' => 32,
+        'END_STARK' => 33, 'END_LANN' => 34,
+        'END_TARG' => 35, 'END_BARA' => 36,
+        'END_TYR' => 37, 'END_MART' => 38,
+        'END_TUL' => 39, 'END_ARR' => 40,
+        'END_GREY' => 41,
     ];
 
     public function run(): void
@@ -99,13 +103,10 @@ class ChoicesSeeder extends Seeder
         $choices = [
 
             // ═══════════════════════════════════════════════════
-            // CHAPTER I — PROLOGUE
-            // Flag seeds: spared_thief, killed_thief (TRUNK_02)
-            //             found_secret_letter (TRUNK_03)
-            // House choices: Lannister intimidation (TRUNK_03 order 6)
-            //                Stark honor gate (TRUNK_04 order 4)
-            //                Greyjoy threat (TRUNK_04 order 5)
-            //                Martell diplomacy (TRUNK_05 order 4)
+            // CHAPTER I — THE JOURNEY (MERGED Ch I + Ch II)
+            // TRUNK_01: Flag seeds (spared_thief, killed_thief)
+            // TRUNK_02: found_secret_letter
+            // TRUNK_03: City arrival + Council intro
             // ═══════════════════════════════════════════════════
 
             // TRUNK_01 → TRUNK_02
@@ -121,394 +122,225 @@ class ChoicesSeeder extends Seeder
                 'Accept and begin quietly drafting political allies before you depart.',
                 'Every alliance is a debt in waiting.',
                 0, +8, +12, true, null],
-
-            // TRUNK_02 → TRUNK_03  (flag seeds on orders 4 and 5)
-            [$n['TRUNK_02'], $n['TRUNK_03'], 1, null,
-                'Ride hard and fast — arrive before your enemies expect you.',
-                'Speed sacrifices caution.',
-                0, +5, +5, false, null],
-            [$n['TRUNK_02'], $n['TRUNK_03'], 2, null,
-                'Ride slowly, speaking to smallfolk at each village to build a reputation.',
-                'The common people remember.',
-                +8, 0, 0, false, null],
-            [$n['TRUNK_02'], $n['TRUNK_03'], 3, null,
-                'Send your household steward ahead with coin to buy favorable innkeepers.',
-                'Bribery is cheaper than war. Barely.',
-                0, +3, +10, false, null],
             // Order 4: spare the thief — sets spared_thief
-            [$n['TRUNK_02'], $n['TRUNK_03'], 4, null,
+            [$n['TRUNK_01'], $n['TRUNK_02'], 4, null,
                 'Tell the merchant: the boy keeps his hand. Compensate him from your own purse.',
                 'Mercy is expensive. It compounds without interest.',
                 +8, 0, +5, false,
                 '{"sets_flag":"spared_thief"}'],
             // Order 5: give the boy — sets killed_thief
-            [$n['TRUNK_02'], $n['TRUNK_03'], 5, null,
+            [$n['TRUNK_01'], $n['TRUNK_02'], 5, null,
                 'The law is the law. Let the merchant have his justice.',
                 "Power without mercy is efficient. Until it isn't.",
                 -8, +6, 0, false,
                 '{"sets_flag":"killed_thief"}'],
 
-            // TRUNK_03 → TRUNK_04  (found_secret_letter + house choices)
-            [$n['TRUNK_03'], $n['TRUNK_04'], 1, null,
+            // TRUNK_02 → TRUNK_03  (found_secret_letter + house choices)
+            [$n['TRUNK_02'], $n['TRUNK_03'], 1, null,
                 'Ignore the strangers entirely and retire early.',
                 'Not every shadow is a dagger.',
                 +5, -5, 0, false, null],
-            [$n['TRUNK_03'], $n['TRUNK_04'], 2, null,
+            [$n['TRUNK_02'], $n['TRUNK_03'], 2, null,
                 'Have your guard watch the strangers through the night.',
                 'Vigilance costs sleep. Sleep is a luxury.',
                 0, +8, +5, false, null],
-            [$n['TRUNK_03'], $n['TRUNK_04'], 3, null,
+            [$n['TRUNK_02'], $n['TRUNK_03'], 3, null,
                 'Approach one of the strangers and reveal that you have noticed the meeting.',
                 'Bold. Possibly fatal. Definitely memorable.',
                 -5, +10, +8, false, null],
             // Order 4: search saddlebags — sets found_secret_letter
-            [$n['TRUNK_03'], $n['TRUNK_04'], 4, null,
+            [$n['TRUNK_02'], $n['TRUNK_03'], 4, null,
                 "Send your most trusted servant to quietly search the riders' saddlebags while they drink.",
                 'A letter unopened is a question unanswered.',
                 +3, +5, +5, false,
                 '{"sets_flag":"found_secret_letter"}'],
             // Order 5: dynamic house intimidation (min_power 40)
-            [$n['TRUNK_03'], $n['TRUNK_04'], 5, null,
+            [$n['TRUNK_02'], $n['TRUNK_03'], 5, null,
                 'The name of [House] is enough. Let them see your sigil and draw their own conclusions.',
                 'A reputation is cheaper than a sword and cuts deeper.',
                 -3, +12, +5, false,
                 '{"min_power":40}'],
             // Order 6: Lannister-specific coin intimidation
-            [$n['TRUNK_03'], $n['TRUNK_04'], 6, 2,
+            [$n['TRUNK_02'], $n['TRUNK_03'], 6, 2,
                 'Drop a single Lannister coin on the table where the riders can see it. Say nothing.',
                 'The lion does not roar. The lion lets the gold speak.',
                 -5, +15, +8, false,
                 '{"min_power":35}'],
 
-            // TRUNK_04 → TRUNK_05
-            [$n['TRUNK_04'], $n['TRUNK_05'], 1, null,
+            // TRUNK_03 → TRUNK_04 (City arrival + Council)
+            [$n['TRUNK_03'], $n['TRUNK_04'], 1, null,
                 'Pay the gate toll without argument and offer a friendly word to the Gold Cloak.',
                 'Small courtesies, small investments.',
                 +3, 0, +5, false, null],
-            [$n['TRUNK_04'], $n['TRUNK_05'], 2, null,
+            [$n['TRUNK_03'], $n['TRUNK_04'], 2, null,
                 'Invoke your title and demand immediate passage.',
                 'Power asserted is power spent.',
                 -5, +8, 0, false, null],
-            [$n['TRUNK_04'], $n['TRUNK_05'], 3, null,
+            [$n['TRUNK_03'], $n['TRUNK_04'], 3, null,
                 'Bribe the captain and make note of his name for future leverage.',
                 'Corruption begets corruption.',
                 -8, +5, +12, true, null],
             // Order 4: Stark honor gate (min_honor 55)
-            [$n['TRUNK_04'], $n['TRUNK_05'], 4, 1,
+            [$n['TRUNK_03'], $n['TRUNK_04'], 4, 1,
                 "Invoke the ancient right of free passage for lords sworn to the King's Peace.",
                 "The North's honor opens doors gold cannot.",
                 +8, +5, 0, false,
                 '{"min_honor":55}'],
             // Order 5: Greyjoy threat (min_power 60)
-            [$n['TRUNK_04'], $n['TRUNK_05'], 5, 9,
+            [$n['TRUNK_03'], $n['TRUNK_04'], 5, 9,
                 'Remind the captain that [House] ships are anchored three hundred yards from where he stands.',
                 'Drowning men are poor testimony.',
                 -10, +15, +5, false,
                 '{"min_power":60}'],
-
-            // TRUNK_05 → TRUNK_06
-            [$n['TRUNK_05'], $n['TRUNK_06'], 1, null,
-                'Bow deeply and offer measured words of loyalty.',
-                'A king expects deference. A wise king notices sincerity.',
-                +8, 0, 0, false, null],
-            [$n['TRUNK_05'], $n['TRUNK_06'], 2, null,
-                'Speak plainly and offer a specific policy solution immediately.',
-                'Competence is currency in this hall.',
-                0, +10, +5, false, null],
-            [$n['TRUNK_05'], $n['TRUNK_06'], 3, null,
-                'Flatter the king with elaborate theater and use the moment to study the room.',
-                'The actor survives. The honest man does not always.',
-                -5, +5, +8, false, null],
-            // Order 4: Martell formal courtesy (min_honor 50)
-            [$n['TRUNK_05'], $n['TRUNK_06'], 4, 6,
+            // Order 6: Martell formal courtesy (min_honor 50)
+            [$n['TRUNK_03'], $n['TRUNK_04'], 6, 6,
                 'Address the king in the Dornish fashion — the courtesy Dorne has never owed the Iron Throne.',
                 'Respect given freely is worth more than respect extracted.',
                 +10, +5, 0, false,
                 '{"min_honor":50}'],
 
             // ═══════════════════════════════════════════════════
-            // CHAPTER II — THE RISING TENSION
-            // New: found_secret_letter advantage at TRUNK_07 order 4
-            //      House choices at TRUNK_06, TRUNK_08, TRUNK_09, TRUNK_10
+            // CHAPTER II — THE BRANCHING (was Ch III)
+            // TRUNK_04-08: Political intrigue with integrated flag payoffs
             // ═══════════════════════════════════════════════════
 
-            // TRUNK_06 → TRUNK_07
-            [$n['TRUNK_06'], $n['TRUNK_07'], 1, null,
+            // TRUNK_04 → TRUNK_05 (King's illness)
+            [$n['TRUNK_04'], $n['TRUNK_05'], 1, null,
                 "Propose an immediate taxation reform to address the crown's debt.",
                 'Popular with the poor. Catastrophic with the rich.',
                 +10, -5, -10, false, null],
-            [$n['TRUNK_06'], $n['TRUNK_07'], 2, null,
+            [$n['TRUNK_04'], $n['TRUNK_05'], 2, null,
                 'Suggest a controlled debt restructuring with the Iron Bank.',
                 'Bankers have longer memories than kings.',
                 0, +5, +15, true, null],
-            [$n['TRUNK_06'], $n['TRUNK_07'], 3, null,
+            [$n['TRUNK_04'], $n['TRUNK_05'], 3, null,
                 'Quietly begin investigating where the debt money actually went.',
                 'Follow the gold. The gold leaves tracks.',
                 +5, +8, +8, false, null],
-            // Order 4: Tyrell grain offer (min_power 40)
-            [$n['TRUNK_06'], $n['TRUNK_07'], 4, 5,
+            // Order 4: killed_thief ruthlessness payoff
+            [$n['TRUNK_04'], $n['TRUNK_05'], 4, null,
+                "Move into the vacuum before anyone else does. Occupy the Hand's quarters and issue orders in the King's name.",
+                'The ruthless inherit the earth. Or at least the anteroom.',
+                -8, +20, +10, false,
+                '{"required_flag":"killed_thief","min_power":50,"forbidden_flag":"spared_thief"}'],
+            // Order 5: Tyrell grain offer (min_power 40)
+            [$n['TRUNK_04'], $n['TRUNK_05'], 5, 5,
                 "Propose offsetting the crown's grain debt through Highgarden's surplus — quietly.",
                 'The Reach feeds the realm. Everyone knows it. Almost no one says it.',
                 +5, +10, -5, false,
                 '{"min_power":40}'],
 
-            // TRUNK_07 → TRUNK_08
-            [$n['TRUNK_07'], $n['TRUNK_08'], 1, null,
-                'Trust Varys and follow his guidance without question.',
-                "The Spider's web catches everything — including flies who trust it.",
-                -5, +10, +10, false, null],
-            [$n['TRUNK_07'], $n['TRUNK_08'], 2, null,
-                'Thank Varys warmly and then immediately have someone follow him.',
-                'Counter-espionage. Everyone is doing it.',
-                0, +8, +5, false, null],
-            [$n['TRUNK_07'], $n['TRUNK_08'], 3, null,
-                'Ignore the scroll entirely — Varys plants seeds that grow in directions he chooses.',
-                'Paranoia is expensive. So is naivety.',
-                +8, -5, 0, false, null],
-            // Order 4: found_secret_letter — show Varys the inn letter
-            [$n['TRUNK_07'], $n['TRUNK_08'], 4, null,
-                "Show Varys the letter from the inn. Watch his face. What doesn't move will tell you everything.",
-                'The man who already knows the answer watches the question very differently.',
-                +5, +15, 0, false,
+            // TRUNK_05 → TRUNK_06 (Letter + Assassination)
+            [$n['TRUNK_05'], $n['TRUNK_06'], 1, null,
+                "Write back with reassurance and double your family's security quietly.",
+                'Family is armor. Family is also leverage.',
+                +5, +5, +10, false, null],
+            [$n['TRUNK_05'], $n['TRUNK_06'], 2, null,
+                'Ignore the letter — paranoia serves the people who plant it.',
+                'Ignoring a warning is itself a decision.',
+                0, 0, 0, false, null],
+            [$n['TRUNK_05'], $n['TRUNK_06'], 3, null,
+                'Send your most trusted person home to investigate the threat directly.',
+                'Protecting home costs influence here.',
+                +8, -5, +5, false, null],
+            // Order 4: found_secret_letter — shows advantage
+            [$n['TRUNK_05'], $n['TRUNK_06'], 4, null,
+                'Re-read the letter from the inn alongside the letter from home. Something connects.',
+                'You already know more than they think you know.',
+                +5, +8, 0, false,
                 '{"required_flag":"found_secret_letter"}'],
-
-            // TRUNK_08 → TRUNK_09
-            [$n['TRUNK_08'], $n['TRUNK_09'], 1, null,
-                'Confront the Gold Cloak commander directly with your evidence.',
-                'Courage. Or suicidal honesty.',
-                +10, +5, 0, false, null],
-            [$n['TRUNK_08'], $n['TRUNK_09'], 2, null,
-                'Quietly transfer loyalist officers into key Gold Cloak positions.',
-                'A slow corruption in the right direction.',
-                0, +12, +15, true, null],
-            [$n['TRUNK_08'], $n['TRUNK_09'], 3, null,
-                'Send your findings to three different council members simultaneously.',
-                'Everyone knows. No one can act alone.',
-                +5, +8, +5, false, null],
-            // Order 4: Baratheon direct confrontation (min_power 55)
-            [$n['TRUNK_08'], $n['TRUNK_09'], 4, 4,
-                'Bring the evidence to the commander and give him one chance to resign — or face [House] directly.',
-                'The stag does not negotiate with foxes.',
-                +8, +15, +5, false,
-                '{"min_power":55}'],
-            // Order 5: Tully witnesses (min_honor 55)
-            [$n['TRUNK_08'], $n['TRUNK_09'], 5, 7,
-                'Call three witnesses from the river families — family ties that no bribe can dissolve.',
-                'The Tully name is worth more than a ledger in a Riverlands court.',
-                +12, +8, +5, false,
-                '{"min_honor":55}'],
-
-            // TRUNK_09 → TRUNK_10
-            [$n['TRUNK_09'], $n['TRUNK_10'], 1, null,
+            // Order 5: Report assassination attempt
+            [$n['TRUNK_05'], $n['TRUNK_06'], 5, null,
                 'Report the assassination attempt to the King immediately and loudly.',
                 'Public sympathy is a form of armor.',
                 +8, 0, +5, false, null],
-            [$n['TRUNK_09'], $n['TRUNK_10'], 2, null,
-                'Say nothing, but double your personal guard at private expense.',
-                'Silence is sometimes the safest language.',
-                0, +8, +12, false, null],
-            [$n['TRUNK_09'], $n['TRUNK_10'], 3, null,
-                'Investigate alone, trusting no one with the information.',
-                'Secrets kept alone are secrets that die with you.',
-                +5, +5, 0, false, null],
-            // Order 4: Targaryen fire-response (forbidden_flag killed_thief)
-            [$n['TRUNK_09'], $n['TRUNK_10'], 4, 3,
+            // Order 6: Targaryen fire-response (forbidden_flag killed_thief)
+            [$n['TRUNK_05'], $n['TRUNK_06'], 6, 3,
                 'Publicly name the bolt as a political act and invoke the Valyrian right to answer fire with fire.',
                 'Dragons do not hide from the dark. They illuminate it.',
                 -5, +18, +8, false,
                 '{"forbidden_flag":"killed_thief"}'],
 
-            // TRUNK_10 → TRUNK_11
-            [$n['TRUNK_10'], $n['TRUNK_11'], 1, null,
-                'Perform the social game perfectly — toast every faction, offend no one.',
-                'Neutrality has a cost. So does choosing sides.',
-                +5, +5, +8, false, null],
-            [$n['TRUNK_10'], $n['TRUNK_11'], 2, null,
-                'Sit near the king and demonstrate intimate access to power.',
-                "Proximity to power invites attacks from power's enemies.",
-                -5, +12, +5, false, null],
-            [$n['TRUNK_10'], $n['TRUNK_11'], 3, null,
-                'Use the feast to quietly arrange three private meetings for tomorrow.',
-                'Politics happens between the dances.',
-                0, +8, +10, false, null],
-            // Order 4: Arryn honor speech (min_honor 60)
-            [$n['TRUNK_10'], $n['TRUNK_11'], 4, 8,
-                'Use the feast as a dais. Speak plainly about the law, as the Eyrie has always spoken.',
-                'As high as honor — and at a feast, that is very high indeed.',
-                +15, +5, 0, false,
-                '{"min_honor":60}'],
-
-            // ═══════════════════════════════════════════════════
-            // CHAPTER III — THE BRANCHING
-            // New: killed_thief ruthlessness at TRUNK_11 order 4
-            //      Letter flag routes at TRUNK_12 orders 4-5
-            //      found_secret_letter at TRUNK_13 order 4
-            //      spared_thief shortcut at TRUNK_14 order 4
-            //      Consequence detour routes to THIEF_MERCY / THIEF_BLOOD
-            // ═══════════════════════════════════════════════════
-
-            // TRUNK_11 → TRUNK_12
-            [$n['TRUNK_11'], $n['TRUNK_12'], 1, null,
-                'Demand access to the King immediately — rule requires visible leadership.',
-                'Boldness impresses the uncertain.',
-                -5, +10, +5, false, null],
-            [$n['TRUNK_11'], $n['TRUNK_12'], 2, null,
-                "Begin running the council in the King's absence, quietly and efficiently.",
-                'The effective Hand wears no crown.',
-                +8, +8, +5, false, null],
-            [$n['TRUNK_11'], $n['TRUNK_12'], 3, null,
-                'Investigate whether the fever is genuine or manufactured.',
-                'Paranoia, but the justified kind.',
-                +5, +5, +8, false, null],
-            // Order 4: killed_thief ruthlessness payoff
-            [$n['TRUNK_11'], $n['TRUNK_12'], 4, null,
-                "Move into the vacuum before anyone else does. Occupy the Hand's quarters and issue orders in the King's name.",
-                'The ruthless inherit the earth. Or at least the anteroom.',
-                -8, +20, +10, false,
-                '{"required_flag":"killed_thief","min_power":50,"forbidden_flag":"spared_thief"}'],
-            // Order 5: Greyjoy iron price
-            [$n['TRUNK_11'], $n['TRUNK_12'], 5, 9,
-                'The weak scramble for succession. [House] simply acts. Take what is needed.',
-                'We do not ask. We do not wait.',
-                -10, +18, +8, false,
-                '{"min_power":65}'],
-
-            // TRUNK_12 → TRUNK_13 (standard) + flag detour routes
-            [$n['TRUNK_12'], $n['TRUNK_13'], 1, null,
-                "Write back with reassurance and double your family's security quietly.",
-                'Family is armor. Family is also leverage.',
-                +5, +5, +10, false, null],
-            [$n['TRUNK_12'], $n['TRUNK_13'], 2, null,
-                'Ignore the letter — paranoia serves the people who plant it.',
-                'Ignoring a warning is itself a decision.',
-                0, 0, 0, false, null],
-            [$n['TRUNK_12'], $n['TRUNK_13'], 3, null,
-                'Send your most trusted person home to investigate the threat directly.',
-                'Protecting home costs influence here.',
-                +8, -5, +5, false, null],
-            // Order 4: route to LETTER_REVEAL (required_flag: found_secret_letter)
-            [$n['TRUNK_12'], $n['LETTER_REVEAL'], 4, null,
-                'Re-read the letter from the inn alongside the letter from home. Something connects.',
-                'You already know more than they think you know.',
-                +5, +8, 0, false,
-                '{"required_flag":"found_secret_letter"}'],
-            // Order 5: route to LETTER_MISS (forbidden_flag: found_secret_letter)
-            [$n['TRUNK_12'], $n['LETTER_MISS'], 5, null,
-                'Try to piece together the warning from context alone — but context is exactly what you lack.',
-                'The map is incomplete. You are travelling anyway.',
-                -3, 0, +5, false,
-                '{"forbidden_flag":"found_secret_letter"}'],
-
-            // LETTER_REVEAL → TRUNK_13
-            [$n['LETTER_REVEAL'], $n['TRUNK_13'], 1, null,
+            // TRUNK_06 → TRUNK_07 (Confession + Feast)
+            [$n['TRUNK_06'], $n['TRUNK_07'], 1, null,
                 'Move to the Sept immediately. You know what the dying septon will say before he says it.',
                 'Foreknowledge is the rarest armor.',
                 +5, +10, 0, false, null],
-            [$n['LETTER_REVEAL'], $n['TRUNK_13'], 2, null,
+            [$n['TRUNK_06'], $n['TRUNK_07'], 2, null,
                 'Verify the name through your own contacts first — one more day will not matter.',
                 'Patience has always been the better part of intelligence.',
                 +8, +5, +5, false, null],
-
-            // LETTER_MISS → TRUNK_13
-            [$n['LETTER_MISS'], $n['TRUNK_13'], 1, null,
+            [$n['TRUNK_06'], $n['TRUNK_07'], 3, null,
                 'Go to the Sept and hope the context arrives with you.',
                 'Improvise. It has worked before.',
                 0, +5, +5, false, null],
-            [$n['LETTER_MISS'], $n['TRUNK_13'], 2, null,
-                'Delay — spend two more days gathering intelligence before going anywhere near the Sept.',
-                'Caution costs time. Time is what you have least of.',
-                +5, +3, +8, false, null],
-
-            // TRUNK_13 → TRUNK_14
-            [$n['TRUNK_13'], $n['TRUNK_14'], 1, null,
-                'Pursue the name on the parchment — track down whoever it points to.',
-                'Answers come with prices.',
-                +5, +8, +8, false, null],
-            [$n['TRUNK_13'], $n['TRUNK_14'], 2, null,
-                'Burn the parchment and walk away from whatever it opens.',
-                'Some doors should stay closed.',
-                +8, -5, -5, false, null],
-            [$n['TRUNK_13'], $n['TRUNK_14'], 3, null,
-                'Show the parchment to one trusted ally and plan your next move together.',
-                'Shared secrets are halved secrets.',
-                0, +5, +5, false, null],
             // Order 4: found_secret_letter prepared verdict (min_honor 45)
-            [$n['TRUNK_13'], $n['TRUNK_14'], 4, null,
+            [$n['TRUNK_06'], $n['TRUNK_07'], 4, null,
                 'You already know where this leads. Skip the verification and move directly to the source.',
                 'The prepared mind sees the trap before it springs.',
                 +10, +12, -5, false,
                 '{"required_flag":"found_secret_letter","min_honor":45}'],
             // Order 5: Lannister monetize the information (min_power 45)
-            [$n['TRUNK_13'], $n['TRUNK_14'], 5, 2,
+            [$n['TRUNK_06'], $n['TRUNK_07'], 5, 2,
                 'The name on the parchment is worth money. Find out who will pay the most to keep it quiet.',
                 'Information is the only currency that pays compound interest.',
                 -8, +15, +12, false,
                 '{"min_power":45}'],
+            // Order 6: Perform the social game at feast
+            [$n['TRUNK_06'], $n['TRUNK_07'], 6, null,
+                'Use the feast to quietly arrange three private meetings for tomorrow.',
+                'Politics happens between the dances.',
+                0, +8, +10, false, null],
+            // Order 7: Arryn honor speech (min_honor 60)
+            [$n['TRUNK_06'], $n['TRUNK_07'], 7, 8,
+                'Use the feast as a dais. Speak plainly about the law, as the Eyrie has always spoken.',
+                'As high as honor — and at a feast, that is very high indeed.',
+                +15, +5, 0, false,
+                '{"min_honor":60}'],
 
-            // TRUNK_14 → TRUNK_15  (standard + flag-consequence routes)
-            [$n['TRUNK_14'], $n['TRUNK_15'], 1, null,
+            // TRUNK_07 → TRUNK_08 (Council of banners — flag payoffs integrated)
+            [$n['TRUNK_07'], $n['TRUNK_08'], 1, null,
                 'Take the chair. Lead the council openly.',
                 'Leadership is visible. Visibility is dangerous.',
                 +5, +8, +5, false, null],
-            [$n['TRUNK_14'], $n['TRUNK_15'], 2, null,
+            [$n['TRUNK_07'], $n['TRUNK_08'], 2, null,
                 'Decline the chair, but broker a compromise between factions.',
                 'Kingmakers outlive kings.',
                 +8, +5, +8, false, null],
-            [$n['TRUNK_14'], $n['TRUNK_15'], 3, null,
+            [$n['TRUNK_07'], $n['TRUNK_08'], 3, null,
                 'Observe and say nothing — let others reveal their positions first.',
                 'Silence is information.',
                 0, +5, 0, false, null],
-            // Order 4: spared_thief mercy shortcut (min_honor 55, forbidden killed_thief)
-            [$n['TRUNK_14'], $n['TRUNK_15'], 4, null,
-                "Present the names from the boy's document — bought with mercy, worth more than any bribe.",
+            // Order 4: spared_thief mercy shortcut — integrated payoff (min_honor 55)
+            [$n['TRUNK_07'], $n['TRUNK_08'], 4, null,
+                'A shadow slips through the door — the boy from the Crossroads. He sets a sealed document on your desk without a word. Present the names to the council — bought with mercy, worth more than any bribe.',
                 'What you gave without expecting return has returned everything.',
                 +15, +10, -5, false,
                 '{"required_flag":"spared_thief","min_honor":55,"forbidden_flag":"killed_thief"}'],
-            // Order 5: killed_thief — merchant problem detour to THIEF_BLOOD
-            [$n['TRUNK_14'], $n['THIEF_BLOOD'], 5, null,
-                'Excuse yourself briefly. The merchant from the Crossroads needs to be dealt with before he reaches anyone important.',
+            // Order 5: killed_thief — integrated merchant problem
+            [$n['TRUNK_07'], $n['TRUNK_08'], 5, null,
+                'Excuse yourself briefly — the merchant from the Crossroads has arrived and needs to be dealt with before he reaches anyone important. Pay him to leave.',
                 'Old sins move faster when you are standing still.',
-                -5, +5, +10, false,
+                -5, +5, +15, false,
                 '{"required_flag":"killed_thief"}'],
-            // Order 6: spared_thief — boy's contact has arrived (detour to THIEF_MERCY)
-            [$n['TRUNK_14'], $n['THIEF_MERCY'], 6, null,
-                'A shadow waits in your anteroom. Step away from the table for a moment.',
-                'The debt you did not know you were owed has just come due.',
-                +5, +8, 0, false,
-                '{"required_flag":"spared_thief"}'],
+            // Order 6: Greyjoy iron price
+            [$n['TRUNK_07'], $n['TRUNK_08'], 6, 9,
+                'The weak scramble for succession. [House] simply acts. Take what is needed.',
+                'We do not ask. We do not wait.',
+                -10, +18, +8, false,
+                '{"min_power":65}'],
 
-            // THIEF_MERCY → TRUNK_15
-            [$n['THIEF_MERCY'], $n['TRUNK_15'], 1, null,
-                'Return to the council chamber with the list of names. Show everyone simultaneously.',
-                'Transparency is terrifying. That is precisely its power.',
-                +12, +10, 0, false, null],
-            [$n['THIEF_MERCY'], $n['TRUNK_15'], 2, null,
-                'Keep the list. Use it quietly over the coming days to neutralize each name individually.',
-                'The patient hunter eats better than the hasty one.',
-                +5, +15, +5, false, null],
-
-            // THIEF_BLOOD → TRUNK_15
-            [$n['THIEF_BLOOD'], $n['TRUNK_15'], 1, null,
-                'Pay the merchant a significant sum to leave before dawn.',
-                'Some problems can still be purchased into silence.',
-                0, +8, +15, false, null],
-            [$n['THIEF_BLOOD'], $n['TRUNK_15'], 2, null,
-                "Have the merchant's testimony invalidated through a friendly magistrate.",
-                'Justice, in King\'s Landing, is what you can afford.',
-                -8, +10, +18, true,
-                '{"min_power":50}'],
-
-            // TRUNK_15 — THE BRANCH POINT
-            [$n['TRUNK_15'], $n['STARK_A'],  1,  1, 'Call upon the Northern Lords. Winter is coming, and the North remembers every debt.', "Only those of the wolf's blood understand this call.", +10, +5, 0, false, null],
-            [$n['TRUNK_15'], $n['LANN_A'],   2,  2, 'Invoke the Lannister name and the weight of Casterly Rock\'s gold.', 'Gold opens every door — for a price.', -5, +15, +15, true, null],
-            [$n['TRUNK_15'], $n['TARG_A'],   3,  3, 'Send the secret word east, across the Narrow Sea.', 'Fire and blood have long memories.', 0, +10, +10, false, null],
-            [$n['TRUNK_15'], $n['BARA_A'],   4,  4, 'Rally under the crowned stag and demand justice for the bloodline.', 'Fury, when justified, is unstoppable.', +8, +10, +5, false, null],
-            [$n['TRUNK_15'], $n['TYR_A'],    5,  5, 'Send a rose to Highgarden and wait for it to bloom.', 'Patience is the most Tyrell of weapons.', +5, +8, +12, false, null],
-            [$n['TRUNK_15'], $n['MART_A'],   6,  6, 'Reach out to Dorne with the ancient formula of respect and patience.', 'You cannot rush the sun.', +8, +5, 0, false, null],
-            [$n['TRUNK_15'], $n['TUL_A'],    7,  7, 'Summon the river lords under family, duty, and honour.', 'Three words that have toppled kingdoms.', +10, +8, 0, false, null],
-            [$n['TRUNK_15'], $n['ARR_A'],    8,  8, 'Send a falcon to the Eyrie and invoke the old mountain law.', 'The high places remember every oath sworn beneath them.', +10, +5, 0, false, null],
-            [$n['TRUNK_15'], $n['GREY_A'],   9,  9, 'Light a signal fire on the harbor shore — the old code the ironborn still answer.', "The drowned god's children come when called, but not without cost.", -5, +15, +18, true, null],
-            [$n['TRUNK_15'], $n['COMM_A'],  10, null, 'Stand alone. No banner, no house, no lord. Only your own judgment.', 'Freedom is a compass with no north.', +5, -5, 0, false, null],
+            // TRUNK_08 — THE BRANCH POINT (to House nodes)
+            [$n['TRUNK_08'], $n['STARK_A'],  1,  1, 'Call upon the Northern Lords. Winter is coming, and the North remembers every debt.', "Only those of the wolf's blood understand this call.", +10, +5, 0, false, null],
+            [$n['TRUNK_08'], $n['LANN_A'],   2,  2, 'Invoke the Lannister name and the weight of Casterly Rock\'s gold.', 'Gold opens every door — for a price.', -5, +15, +15, true, null],
+            [$n['TRUNK_08'], $n['TARG_A'],   3,  3, 'Send the secret word east, across the Narrow Sea.', 'Fire and blood have long memories.', 0, +10, +10, false, null],
+            [$n['TRUNK_08'], $n['BARA_A'],   4,  4, 'Rally under the crowned stag and demand justice for the bloodline.', 'Fury, when justified, is unstoppable.', +8, +10, +5, false, null],
+            [$n['TRUNK_08'], $n['TYR_A'],    5,  5, 'Send a rose to Highgarden and wait for it to bloom.', 'Patience is the most Tyrell of weapons.', +5, +8, +12, false, null],
+            [$n['TRUNK_08'], $n['MART_A'],   6,  6, 'Reach out to Dorne with the ancient formula of respect and patience.', 'You cannot rush the sun.', +8, +5, 0, false, null],
+            [$n['TRUNK_08'], $n['TUL_A'],    7,  7, 'Summon the river lords under family, duty, and honour.', 'Three words that have toppled kingdoms.', +10, +8, 0, false, null],
+            [$n['TRUNK_08'], $n['ARR_A'],    8,  8, 'Send a falcon to the Eyrie and invoke the old mountain law.', 'The high places remember every oath sworn beneath them.', +10, +5, 0, false, null],
+            [$n['TRUNK_08'], $n['GREY_A'],   9,  9, 'Light a signal fire on the harbor shore — the old code the ironborn still answer.', "The drowned god's children come when called, but not without cost.", -5, +15, +18, true, null],
+            [$n['TRUNK_08'], $n['COMM_A'],  10, null, 'Stand alone. No banner, no house, no lord. Only your own judgment.', 'Freedom is a compass with no north.', +5, -5, 0, false, null],
 
             // ═══════════════════════════════════════════════════
             // CHAPTER IV — HOUSE BRANCH A → B
