@@ -19,11 +19,12 @@ class DashboardController extends Controller
         $unlockedHouses = $user->houses()->count();
         $totalHouses = House::count();
 
-        $discoveredEndings = Run::where('player_id', $player?->id)
+        $discoveredEndingIds = Run::where('player_id', $player?->id)
             ->whereNotNull('ending_node_id')
             ->pluck('ending_node_id')
             ->unique()
-            ->count();
+            ->toArray();
+        $discoveredEndings = Ending::whereIn('node_id', $discoveredEndingIds)->count();
         $totalEndings = Ending::count();
 
         return view('dashboard', compact('totalRuns', 'unlockedHouses', 'discoveredEndings', 'totalHouses', 'totalEndings'));

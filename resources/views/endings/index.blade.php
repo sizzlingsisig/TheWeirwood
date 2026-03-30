@@ -31,7 +31,7 @@
                 <h1 class="font-['Cinzel'] text-2xl font-bold text-[var(--bone)] tracking-wider">Endings Catalogue</h1>
                 <p class="text-[var(--mist)] mt-2 italic">Discover all possible fates within the Weirwood</p>
             </div>
-            <span class="text-[var(--gold-light)] font-['Cinzel'] text-sm">{{ count($discoveredEndingIds) }} / {{ $allEndings->count() }} Discovered</span>
+            <span class="text-[var(--gold-light)] font-['Cinzel'] text-sm">{{ $allEndings->filter(fn($e) => in_array($e->node_id, $discoveredEndingIds))->count() }} / {{ $allEndings->count() }} Discovered</span>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" x-data="{ hoveredEnding: null, hoveredData: null }">
