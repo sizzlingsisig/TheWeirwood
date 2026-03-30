@@ -75,102 +75,102 @@ class HousesSeeder extends Seeder
             ]);
         }
 
-        $this->seedFakerHouses();
+        // $this->seedFakerHouses();
     }
 
-    protected function seedFakerHouses(): void
-    {
-        $faker = Faker::create();
-        $now = Carbon::now();
+    // protected function seedFakerHouses(): void
+    // {
+    //     $faker = Faker::create();
+    //     $now = Carbon::now();
 
-        $housePrefixes = ['House', 'Clan', 'Family', 'Dynasty', 'Brotherhood', 'Order'];
-        $houseNames = [
-            'Blackwood', 'Mormont', 'Glover', 'Karstark', 'Umber', 'Manderly', 'Bolton', 'Flint', 'Ryswell', 'Dustin',
-            'Hightower', 'Redwyne', 'Oakheart', 'Fossoway', 'Bulwer', 'Crane', 'Meryon', 'Harlaw', 'Greyiron', 'Drumm',
-            'Dayne', 'Yronwood', 'Fowler', 'Allyrion', 'Qorgyle', 'Santagar', 'Dalt', 'Wyl', 'Mandrake', 'Lorch',
-            'Clegane', 'Karhook', 'Casterly', 'Sarsfield', 'Lefford', 'Lannister', 'Payne', 'Swyft', 'Westerling', 'Risley',
-            'Moore', 'Mooton', 'Vance', 'Blackwood', 'Bracken', 'Mallister', 'Darren', 'Deddings', 'Frey', 'Roote',
-        ];
+    //     $housePrefixes = ['House', 'Clan', 'Family', 'Dynasty', 'Brotherhood', 'Order'];
+    //     $houseNames = [
+    //         'Blackwood', 'Mormont', 'Glover', 'Karstark', 'Umber', 'Manderly', 'Bolton', 'Flint', 'Ryswell', 'Dustin',
+    //         'Hightower', 'Redwyne', 'Oakheart', 'Fossoway', 'Bulwer', 'Crane', 'Meryon', 'Harlaw', 'Greyiron', 'Drumm',
+    //         'Dayne', 'Yronwood', 'Fowler', 'Allyrion', 'Qorgyle', 'Santagar', 'Dalt', 'Wyl', 'Mandrake', 'Lorch',
+    //         'Clegane', 'Karhook', 'Casterly', 'Sarsfield', 'Lefford', 'Lannister', 'Payne', 'Swyft', 'Westerling', 'Risley',
+    //         'Moore', 'Mooton', 'Vance', 'Blackwood', 'Bracken', 'Mallister', 'Darren', 'Deddings', 'Frey', 'Roote',
+    //     ];
 
-        $mottos = [
-            'By Sword or Word', 'Strength and Honor', 'None So Fierce', 'The Watchful Eye', 'From This Day Forward',
-            'Honor, Not Honors', 'Our Word is Gold', 'Blood and Fire', 'The Righteous Path', 'Pride Before the Fall',
-            'The Stone Shall Rise', 'Light in Darkness', 'Sworn to Protect', 'Justice Before Mercy', 'The Brave Endure',
-            'Walls of Stone', 'Together We Stand', 'Ever Forward', 'No Retreat', 'The Dawn Awaits',
-            'Truth Will Prevail', 'Wisdom Above All', 'The Old Ways', 'Steel and Spirit', 'The Hidden Truth',
-            'Guardians of the Realm', 'The Eternal Flame', 'From Ashes We Rise', 'The Last Stand', 'Silent but Deadly',
-        ];
+    //     $mottos = [
+    //         'By Sword or Word', 'Strength and Honor', 'None So Fierce', 'The Watchful Eye', 'From This Day Forward',
+    //         'Honor, Not Honors', 'Our Word is Gold', 'Blood and Fire', 'The Righteous Path', 'Pride Before the Fall',
+    //         'The Stone Shall Rise', 'Light in Darkness', 'Sworn to Protect', 'Justice Before Mercy', 'The Brave Endure',
+    //         'Walls of Stone', 'Together We Stand', 'Ever Forward', 'No Retreat', 'The Dawn Awaits',
+    //         'Truth Will Prevail', 'Wisdom Above All', 'The Old Ways', 'Steel and Spirit', 'The Hidden Truth',
+    //         'Guardians of the Realm', 'The Eternal Flame', 'From Ashes We Rise', 'The Last Stand', 'Silent but Deadly',
+    //     ];
 
-        $descriptions = [
-            'An ancient house with a storied past, known throughout the realm for their @ 다양한特质. Their @ 시그니처特征 has earned them both respect and fear among their peers.',
-            'A proud house whose members are @著名于 for their @技能. Though not among the greatest houses, they maintain their honor with @决心.',
-            'Rulers of @地理区域, this house has endured for centuries through @策略. Their @传统 is spoken of in whispers throughout the land.',
-            'Once @辉煌的过去, this house now seeks to reclaim former glory. Their @口号 reflects their @愿望.',
-            'A @神秘 house whose origins are shrouded in mystery. They say their @信条 has protected them from @威胁 for generations.',
-            'Known for their @特殊能力 in battle, this house commands respect on the @战场. Their @遗产 dates back to the @时代.',
-            'This house rose to power through @手段 during the @时期. Their @统治 has been marked by @事件.',
-            'Guardians of the @地方, these @标题 are sworn to protect the @守护对象. Their @誓言 is unbreakable.',
-            'A house of @发明者 and @思想家, they have contributed greatly to the @领域. Their @贡献 is remembered to this day.',
-            'The @姓氏 are @描述人 from the @地区. Their @特征 make them stand out among the nobility.',
-        ];
+    //     $descriptions = [
+    //         'An ancient house with a storied past, known throughout the realm for their @ 다양한特质. Their @ 시그니처特征 has earned them both respect and fear among their peers.',
+    //         'A proud house whose members are @著名于 for their @技能. Though not among the greatest houses, they maintain their honor with @决心.',
+    //         'Rulers of @地理区域, this house has endured for centuries through @策略. Their @传统 is spoken of in whispers throughout the land.',
+    //         'Once @辉煌的过去, this house now seeks to reclaim former glory. Their @口号 reflects their @愿望.',
+    //         'A @神秘 house whose origins are shrouded in mystery. They say their @信条 has protected them from @威胁 for generations.',
+    //         'Known for their @特殊能力 in battle, this house commands respect on the @战场. Their @遗产 dates back to the @时代.',
+    //         'This house rose to power through @手段 during the @时期. Their @统治 has been marked by @事件.',
+    //         'Guardians of the @地方, these @标题 are sworn to protect the @守护对象. Their @誓言 is unbreakable.',
+    //         'A house of @发明者 and @思想家, they have contributed greatly to the @领域. Their @贡献 is remembered to this day.',
+    //         'The @姓氏 are @描述人 from the @地区. Their @特征 make them stand out among the nobility.',
+    //     ];
 
-        $fakerHouses = [];
+    //     $fakerHouses = [];
 
-        for ($i = 0; $i < 20; $i++) {
-            $prefix = $faker->randomElement($housePrefixes);
-            $name = $faker->randomElement($houseNames);
-            $fullName = "$prefix $name";
+    //     for ($i = 0; $i < 20; $i++) {
+    //         $prefix = $faker->randomElement($housePrefixes);
+    //         $name = $faker->randomElement($houseNames);
+    //         $fullName = "$prefix $name";
 
-            $description = $faker->randomElement($descriptions);
-            $description = str_replace('@ 다양한特质', $faker->word(), $description);
-            $description = str_replace('@ 시그니처特征', $faker->word(), $description);
-            $description = str_replace('@著名于', $faker->word(), $description);
-            $description = str_replace('@技能', $faker->word(), $description);
-            $description = str_replace('@决心', $faker->word(), $description);
-            $description = str_replace('@地理区域', $faker->word().' '.$faker->word(), $description);
-            $description = str_replace('@策略', $faker->word(), $description);
-            $description = str_replace('@传统', $faker->word(), $description);
-            $description = str_replace('@愿望', $faker->word(), $description);
-            $description = str_replace('@辉煌的过去', $faker->sentence(3), $description);
-            $description = str_replace('@神秘', $faker->word(), $description);
-            $description = str_replace('@信条', $faker->word(), $description);
-            $description = str_replace('@威胁', $faker->word(), $description);
-            $description = str_replace('@特殊能力', $faker->word(), $description);
-            $description = str_replace('@战场', $faker->word(), $description);
-            $description = str_replace('@遗产', $faker->word(), $description);
-            $description = str_replace('@时代', $faker->word(), $description);
-            $description = str_replace('@手段', $faker->word(), $description);
-            $description = str_replace('@时期', $faker->word(), $description);
-            $description = str_replace('@统治', $faker->word(), $description);
-            $description = str_replace('@事件', $faker->word(), $description);
-            $description = str_replace('@地方', $faker->word(), $description);
-            $description = str_replace('@标题', $faker->word(), $description);
-            $description = str_replace('@守护对象', $faker->word(), $description);
-            $description = str_replace('@誓言', $faker->word(), $description);
-            $description = str_replace('@发明者', $faker->word(), $description);
-            $description = str_replace('@思想家', $faker->word(), $description);
-            $description = str_replace('@领域', $faker->word(), $description);
-            $description = str_replace('@贡献', $faker->word(), $description);
-            $description = str_replace('@描述人', $faker->word(), $description);
-            $description = str_replace('@地区', $faker->word(), $description);
-            $description = str_replace('@特征', $faker->word(), $description);
+    //         $description = $faker->randomElement($descriptions);
+    //         $description = str_replace('@ 다양한特质', $faker->word(), $description);
+    //         $description = str_replace('@ 시그니처特征', $faker->word(), $description);
+    //         $description = str_replace('@著名于', $faker->word(), $description);
+    //         $description = str_replace('@技能', $faker->word(), $description);
+    //         $description = str_replace('@决心', $faker->word(), $description);
+    //         $description = str_replace('@地理区域', $faker->word().' '.$faker->word(), $description);
+    //         $description = str_replace('@策略', $faker->word(), $description);
+    //         $description = str_replace('@传统', $faker->word(), $description);
+    //         $description = str_replace('@愿望', $faker->word(), $description);
+    //         $description = str_replace('@辉煌的过去', $faker->sentence(3), $description);
+    //         $description = str_replace('@神秘', $faker->word(), $description);
+    //         $description = str_replace('@信条', $faker->word(), $description);
+    //         $description = str_replace('@威胁', $faker->word(), $description);
+    //         $description = str_replace('@特殊能力', $faker->word(), $description);
+    //         $description = str_replace('@战场', $faker->word(), $description);
+    //         $description = str_replace('@遗产', $faker->word(), $description);
+    //         $description = str_replace('@时代', $faker->word(), $description);
+    //         $description = str_replace('@手段', $faker->word(), $description);
+    //         $description = str_replace('@时期', $faker->word(), $description);
+    //         $description = str_replace('@统治', $faker->word(), $description);
+    //         $description = str_replace('@事件', $faker->word(), $description);
+    //         $description = str_replace('@地方', $faker->word(), $description);
+    //         $description = str_replace('@标题', $faker->word(), $description);
+    //         $description = str_replace('@守护对象', $faker->word(), $description);
+    //         $description = str_replace('@誓言', $faker->word(), $description);
+    //         $description = str_replace('@发明者', $faker->word(), $description);
+    //         $description = str_replace('@思想家', $faker->word(), $description);
+    //         $description = str_replace('@领域', $faker->word(), $description);
+    //         $description = str_replace('@贡献', $faker->word(), $description);
+    //         $description = str_replace('@描述人', $faker->word(), $description);
+    //         $description = str_replace('@地区', $faker->word(), $description);
+    //         $description = str_replace('@特征', $faker->word(), $description);
 
-            $fakerHouses[] = [
-                'name' => $fullName,
-                'motto' => $faker->randomElement($mottos),
-                'description' => $description,
-                'sigil_image_path' => null,
-                'starting_honor' => $faker->numberBetween(10, 90),
-                'starting_power' => $faker->numberBetween(10, 90),
-                'starting_debt' => $faker->numberBetween(5, 45),
-                'created_at' => $now,
-                'updated_at' => $now,
-                'deleted_at' => null,
-            ];
-        }
+    //         $fakerHouses[] = [
+    //             'name' => $fullName,
+    //             'motto' => $faker->randomElement($mottos),
+    //             'description' => $description,
+    //             'sigil_image_path' => null,
+    //             'starting_honor' => $faker->numberBetween(10, 90),
+    //             'starting_power' => $faker->numberBetween(10, 90),
+    //             'starting_debt' => $faker->numberBetween(5, 45),
+    //             'created_at' => $now,
+    //             'updated_at' => $now,
+    //             'deleted_at' => null,
+    //         ];
+    //     }
 
-        foreach ($fakerHouses as $house) {
-            DB::table('houses')->updateOrInsert(['name' => $house['name']], $house);
-        }
-    }
+    //     foreach ($fakerHouses as $house) {
+    //         DB::table('houses')->updateOrInsert(['name' => $house['name']], $house);
+    //     }
+    // }
 }

@@ -88,6 +88,34 @@ class HouseTest extends TestCase
 
         $this->delete("/houses/{$house->id}")->assertRedirect('/houses');
 
+        $this->assertSoftDeleted('houses', ['id' => $house->id]);
+    }
+
+    public function test_admin_users_can_restore_deleted_houses(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $house = House::factory()->create();
+        $this->actingAs($admin);
+
+        $house->delete();
+
+        $this->assertSoftDeleted('houses', ['id' => $house->id]);
+
+        $this->post("/houses/{$house->id}/restore");
+
+        $this->assertDatabaseHas('houses', ['id' => $house->id, 'deleted_at' => null]);
+    }
+
+    public function test_admin_users_can_force_delete_houses(): void
+    {
+        $admin = User::factory()->create(['is_admin' => true]);
+        $house = House::factory()->create();
+        $this->actingAs($admin);
+
+        $house->delete();
+
+        $this->delete("/houses/{$house->id}/force-delete");
+
         $this->assertDatabaseMissing('houses', ['id' => $house->id]);
     }
 

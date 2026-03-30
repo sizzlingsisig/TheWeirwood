@@ -34,13 +34,28 @@
             <span class="text-[var(--gold-light)] font-['Cinzel'] text-sm">{{ count($discoveredEndingIds) }} / {{ $allEndings->count() }} Discovered</span>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" x-data="{ hoveredEnding: null, hoveredData: null }">
             @foreach($allEndings as $ending)
                 @php
                     $isDiscovered = in_array($ending->node_id, $discoveredEndingIds);
                 @endphp
-                <div class="bg-[var(--bark)]/60 backdrop-blur-sm rounded-xl border border-[var(--gold)]/20 p-6 {{ !$isDiscovered ? 'opacity-50' : '' }} transition-all hover:border-[var(--gold)]/40">
-                    @if(!$isDiscovered)
+                @if($isDiscovered)
+                    <div 
+                        class="block bg-[var(--bark)]/60 backdrop-blur-sm rounded-xl border border-[var(--gold)]/20 p-6 transition-all hover:border-[var(--gold)]/40 hover:-translate-y-1 cursor-pointer"
+                        @mouseenter="hoveredEnding = {{ $ending->id }}; hoveredData = { type: '{{ $ending->ending_type }}', verdict: '{{ $ending->verdict_label }}', text: @js($ending->ending_text), unlocks: '{{ $ending->unlockedHouse?->name }}' }"
+                        @mouseleave="hoveredEnding = null"
+                    >
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-xs font-['Cinzel'] font-semibold uppercase text-[var(--mist)] tracking-wider">{{ $ending->ending_type }}</span>
+                            @if($ending->unlockedHouse)
+                                <span class="text-xs text-[var(--gold-light)]">Unlocks: {{ $ending->unlockedHouse->name }}</span>
+                            @endif
+                        </div>
+                        <h3 class="font-['Cinzel'] font-bold text-[var(--bone)] text-lg mb-3">{{ $ending->verdict_label }}</h3>
+                        <p class="text-sm text-[var(--parchment)] line-clamp-4 leading-relaxed">{{ $ending->ending_text }}</p>
+                    </div>
+                @else
+                    <div class="bg-[var(--bark)]/60 backdrop-blur-sm rounded-xl border border-[var(--gold)]/20 p-6 opacity-50">
                         <div class="text-center py-8">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-[var(--mist)] mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -48,20 +63,46 @@
                             <p class="text-[var(--mist)] font-['Cinzel'] text-lg">???</p>
                             <p class="text-sm text-[var(--mist)] mt-1">Complete a run to discover</p>
                         </div>
-                    @else
-                        <div>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xs font-['Cinzel'] font-semibold uppercase text-[var(--mist)] tracking-wider">{{ $ending->ending_type }}</span>
-                                @if($ending->unlockedHouse)
-                                    <span class="text-xs text-[var(--gold-light)]">Unlocks: {{ $ending->unlockedHouse->name }}</span>
-                                @endif
-                            </div>
-                            <h3 class="font-['Cinzel'] font-bold text-[var(--bone)] text-lg mb-3">{{ $ending->verdict_label }}</h3>
-                            <p class="text-sm text-[var(--parchment)] line-clamp-4 leading-relaxed">{{ $ending->ending_text }}</p>
-                        </div>
-                    @endif
-                </div>
+                    </div>
+                @endif
             @endforeach
+        </div>
+
+        <!-- Hover Modal Overlay -->
+        <div 
+            x-show="hoveredEnding !== null"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style="display: none;"
+        >
+            <div class="absolute inset-0 bg-black/70" @click="hoveredEnding = null"></div>
+            <div 
+                class="relative bg-[var(--coal)] border border-[var(--gold)]/40 rounded-xl p-8 max-w-2xl w-full shadow-2xl max-h-[80vh] overflow-y-auto"
+                @click.stop
+            >
+                <button @click="hoveredEnding = null" class="absolute top-4 right-4 text-[var(--mist)] hover:text-[var(--bone)]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <template x-if="hoveredData">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-['Cinzel'] font-semibold uppercase text-[var(--gold-light)] tracking-wider" x-text="hoveredData?.type"></span>
+                            <template x-if="hoveredData?.unlocks">
+                                <span class="text-xs text-[var(--gold)]">Unlocks: <span x-text="hoveredData?.unlocks"></span></span>
+                            </template>
+                        </div>
+                        <h3 class="font-['Cinzel'] font-bold text-[var(--bone)] text-2xl mb-4" x-text="hoveredData?.verdict"></h3>
+                        <p class="text-[var(--parchment)] leading-relaxed text-lg" x-text="hoveredData?.text"></p>
+                    </div>
+                </template>
+            </div>
         </div>
     </div>
 </x-layouts.app>

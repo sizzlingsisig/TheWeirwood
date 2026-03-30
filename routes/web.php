@@ -20,13 +20,17 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 
     // The Archivist: Static Content CRUD
-    Route::resource('houses', HouseController::class);
+    
+    // CUSTOM TRASH ROUTES MUST GO ABOVE THE RESOURCE ROUTE!
     Route::get('/houses/trashed', [HouseController::class, 'trashed'])->name('houses.trashed');
     Route::post('/houses/{id}/restore', [HouseController::class, 'restore'])->name('houses.restore');
     Route::delete('/houses/{id}/force-delete', [HouseController::class, 'forceDelete'])->name('houses.forceDelete');
+    
+    // Standard Resources
+    Route::resource('houses', HouseController::class);
     Route::resource('nodes', NodeController::class);
     Route::resource('choices', ChoiceController::class);
-    Route::resource('endings', EndingController::class); // Upgraded to full resource
+    Route::resource('endings', EndingController::class);
 
     // The Player: Meta-Progression
     Route::resource('players', PlayerController::class);
