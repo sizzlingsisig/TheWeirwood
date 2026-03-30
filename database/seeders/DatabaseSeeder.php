@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             EndingsSeeder::class,
             ChoicesSeeder::class,
             UserHouseSeeder::class,
+            UnlockAllEndingsSeeder::class,
         ]);
 
     }

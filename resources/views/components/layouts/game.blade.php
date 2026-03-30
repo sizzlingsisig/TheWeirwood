@@ -96,6 +96,7 @@
             transform: scale(-1);
         }
     </style>
+
 </head>
 
 <body class="bg-[var(--coal)] text-[var(--bone)] font-['Crimson_Text'] text-[18px] antialiased min-h-screen overflow-x-hidden relative"
@@ -370,6 +371,7 @@
         <div class="ember"></div>
         <div class="ember"></div>
     </div>
+
 </body>
 
 </html>

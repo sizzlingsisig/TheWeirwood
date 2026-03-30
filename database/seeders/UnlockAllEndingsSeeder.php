@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Ending;
 use App\Models\Game;
+use App\Models\Player;
 use App\Models\Run;
 use App\Models\User;
 use Carbon\Carbon;
@@ -24,9 +25,10 @@ class UnlockAllEndingsSeeder extends Seeder
         $player = $admin->players()->first();
 
         if (! $player) {
-            $this->command->warn('No player found for admin. Skipping.');
-
-            return;
+            $player = Player::create([
+                'user_id' => $admin->id,
+                'display_name' => $admin->name,
+            ]);
         }
 
         $endings = Ending::all();

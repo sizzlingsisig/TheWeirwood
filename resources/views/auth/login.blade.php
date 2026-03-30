@@ -4,7 +4,7 @@
             <div class="relative bg-[rgba(26,21,18,0.95)] backdrop-blur-md border border-[var(--bark)] shadow-[0_4px_24px_rgba(0,0,0,0.8),0_0_40px_rgba(139,0,0,0.08)] rounded-sm overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[var(--blood)] to-transparent opacity-50"></div>
                 <div class="absolute bottom-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-[var(--blood)] to-transparent opacity-50"></div>
-                
+
                 <div class="p-6">
                     <div class="mb-5 text-center">
                         <div class="inline-flex items-center justify-center w-10 h-10 mb-3 rounded-full border border-[var(--bark)] bg-[var(--coal)]">
@@ -21,6 +21,16 @@
                         <span class="text-[10px] text-[var(--mist)] uppercase tracking-widest font-['Crimson_Text']">Access</span>
                         <div class="flex-1 h-px bg-gradient-to-r from-transparent via-[var(--bark)] to-transparent"></div>
                     </div>
+
+                    @if ($errors->any())
+                        <div class="mb-4 p-3 bg-[rgba(139,0,0,0.1)] border border-[var(--blood)] rounded-sm">
+                            <ul class="text-[var(--blood)] text-xs font-['Crimson_Text'] list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
                     <form method="POST" action="{{ route('login') }}" class="space-y-3.5">
                         @csrf
