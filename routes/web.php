@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArchivistController;
 use App\Http\Controllers\ChoiceController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EndingController;
@@ -20,12 +21,15 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
 
     // The Archivist: Static Content CRUD
-    
+
     // CUSTOM TRASH ROUTES MUST GO ABOVE THE RESOURCE ROUTE!
     Route::get('/houses/trashed', [HouseController::class, 'trashed'])->name('houses.trashed');
     Route::post('/houses/{id}/restore', [HouseController::class, 'restore'])->name('houses.restore');
     Route::delete('/houses/{id}/force-delete', [HouseController::class, 'forceDelete'])->name('houses.forceDelete');
-    
+
+    // The Three-Eyed Raven: Archivist Agent
+    Route::post('/houses/archivist', [ArchivistController::class, 'query'])->name('houses.archivist');
+
     // Standard Resources
     Route::resource('houses', HouseController::class);
     Route::resource('nodes', NodeController::class);
