@@ -28,6 +28,12 @@
             {{-- Protected Archivist Actions --}}
             <div class="flex gap-3">
                 @can('edit-houses')
+                    <button type="button" 
+                            x-data 
+                            @click="$dispatch('open-archivist-modal')"
+                            class="border border-[rgba(184,134,11,0.4)] text-[var(--gold)] font-['Cinzel'] text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-sm hover:bg-[rgba(184,134,11,0.2)] hover:border-[rgba(184,134,11,0.6)] transition-all text-center inline-block whitespace-nowrap">
+                        🏛️ Ask the Archivist
+                    </button>
                     <a href="{{ route('houses.trashed') }}"
                        class="border border-[rgba(107,90,78,0.4)] text-[#E8DCC8] font-['Cinzel'] text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-sm hover:bg-[rgba(107,90,78,0.2)] hover:border-[rgba(184,134,11,0.6)] transition-all text-center inline-block whitespace-nowrap">
                         View Archives
@@ -76,4 +82,122 @@
         @endif
 
     </div>
+
+    {{-- 🏛️ Archivist Modal --}}
+    <div x-data="archivist()" 
+         @open-archivist-modal.window="open = true"
+         @close-archivist-modal.window="open = false"
+         x-show="open" 
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+         style="display: none;">
+        
+        {{-- Modal Content --}}
+        <div @click.outside="open = false"
+             x-show="open"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+             x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+             class="bg-[#1A1512] border border-[rgba(184,134,11,0.4)] rounded-lg shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+            
+            {{-- Header --}}
+            <div class="bg-gradient-to-r from-[rgba(139,0,0,0.3)] to-[rgba(184,134,11,0.2)] px-6 py-4 border-b border-[rgba(184,134,11,0.3)]">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-['Cinzel'] text-xl text-[var(--gold)] tracking-widest">
+                        🏛️ The Three-Eyed Raven
+                    </h2>
+                    <button @click="open = false" class="text-[rgba(232,220,200,0.6)] hover:text-[#E8DCC8] transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <p class="font-['Crimson_Text'] text-[rgba(232,220,200,0.6)] text-sm italic mt-1">
+                    Archivist of House Records and Keeper of Westerosi Lore
+                </p>
+            </div>
+
+            {{-- Query Input --}}
+            <div class="p-6 border-b border-[rgba(107,90,78,0.3)]">
+                <form @submit.prevent="ask">
+                    <textarea x-model="prompt" 
+                              rows="2"
+                              placeholder="Ask about a house's history, or request to create/update/delete a house..."
+                              class="w-full bg-[#0D0B09] border border-[rgba(107,90,78,0.4)] rounded p-4 text-[#E8DCC8] placeholder-[rgba(232,220,200,0.3)] font-['Crimson_Text'] focus:ring-1 focus:ring-[var(--gold)] focus:border-[var(--gold)] resize-none"></textarea>
+                    <div class="flex justify-end mt-3">
+                        <button type="submit" 
+                                :disabled="loading"
+                                class="bg-gradient-to-br from-[rgba(139,0,0,0.8)] to-[rgba(90,0,0,0.9)] border border-[rgba(139,0,0,0.6)] text-[#E8DCC8] font-['Cinzel'] text-xs tracking-[0.2em] uppercase px-6 py-3 rounded-sm hover:from-[rgba(168,0,0,0.9)] hover:to-[#780000] disabled:opacity-50 disabled:cursor-not-allowed transition-all">
+                            <span x-show="!loading">📜 Consult the Archives</span>
+                            <span x-show="loading">Consulting...</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            {{-- Response --}}
+            <div class="p-6 overflow-y-auto max-h-[40vh]" x-show="response">
+                <div class="bg-[#0D0B09]/50 border border-[rgba(107,90,78,0.3)] rounded p-4 font-['Crimson_Text'] text-[#E8DCC8] text-sm leading-relaxed space-y-3 [&_h1]:text-lg [&_h1]:font-['Cinzel'] [&_h1]:font-bold [&_h1]:mb-2 [&_h2]:text-base [&_h2]:font-['Cinzel'] [&_h2]:font-semibold [&_h2]:mb-2 [&_p]:mb-2 [&_ul]:list-disc [&_ul]:list-inside [&_ul]:mb-2 [&_ol]:list-decimal [&_ol]:list-inside [&_ol]:mb-2 [&_li]:mb-1 [&_strong]:font-bold [&_em]:italic [&_code]:bg-[rgba(107,90,78,0.3)] [&_code]:px-1 [&_code]:rounded [&_code]:text-sm [&_blockquote]:border-l-2 [&_blockquote]:border-[rgba(139,0,0,0.6)] [&_blockquote]:pl-3 [&_blockquote]:italic" x-html="response">
+                </div>
+            </div>
+
+            {{-- Error --}}
+            <div class="p-6 overflow-y-auto max-h-[40vh]" x-show="error">
+                <div class="bg-red-900/20 border border-red-800 rounded p-4">
+                    <p x-text="error" class="text-red-400 font-['Crimson_Text'] text-sm"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function archivist() {
+        return {
+            open: false,
+            prompt: '',
+            response: '',
+            error: '',
+            loading: false,
+
+            ask() {
+                if (!this.prompt.trim() || this.loading) return;
+
+                this.loading = true;
+                this.response = '';
+                this.error = '';
+
+                fetch('{{ route('houses.archivist') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ prompt: this.prompt })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.error) {
+                        this.error = data.error;
+                    } else {
+                        this.response = data.response;
+                    }
+                })
+                .catch(err => {
+                    this.error = 'The Archivist is unresponsive. Please try again.';
+                })
+                .finally(() => {
+                    this.loading = false;
+                });
+            }
+        }
+    }
+    </script>
 </x-layouts.app>
